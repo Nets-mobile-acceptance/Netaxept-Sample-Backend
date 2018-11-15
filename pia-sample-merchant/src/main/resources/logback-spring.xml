@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml> 
+<configuration debug="true">
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <fieldNames>
+        		<mdc>id</mdc>
+        		<message>customMessage</message>
+                <caller>caller</caller>
+                <callerClass>class</callerClass>
+                <callerMethod>method</callerMethod>
+                <callerFile>file</callerFile>
+                <callerLine>line</callerLine>
+            </fieldNames>
+            </encoder>
+         <!-- encoder>
+            <pattern>%date %level %X{pathId} %X{bodyId} [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+        </encoder-->
+    </appender>
+
+    <logger name="serviceLogger" additivity="false" level="DEBUG">
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</configuration>

@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eu.nets.ms</groupId>
+	<artifactId>pia-merchant-service</artifactId>
+	<version>1.1.3</version>
+	<packaging>jar</packaging>
+	<name>pia merchant service</name>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.7.RELEASE</version>
+	</parent>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.version>1.8</maven.compiler.version>
+		<spring.boot.version>1.2.4.RELEASE</spring.boot.version>
+		<swagger.version>1.5.12</swagger.version>
+		<version.logstash.logback>4.11</version.logstash.logback>
+		<version.commons.io>2.5</version.commons.io>
+		<version.netaxept-cli>1.0.0-TEST</version.netaxept-cli>
+		<version.junit>4.12</version.junit>
+		<version.mockito>1.10.19</version.mockito>
+		<version.hamcrest>2.0.0.0</version.hamcrest>
+		<version.rest-assured>2.9.0</version.rest-assured>
+		<version.sonar-maven-plugin>5.1</version.sonar-maven-plugin>
+		
+		<artifact.url>https://mvnrepository.com</artifact.url>
+		<spring.profiles.active>default</spring.profiles.active>
+		<skip.integration.tests>false</skip.integration.tests>
+		<skip.unit.tests>false</skip.unit.tests>
+		
+		<appargs></appargs>
+		
+		<javaoptions>-Djava.net.preferIPv4Stack=true</javaoptions>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<gitflow.helper.plugin.version>1.7.2</gitflow.helper.plugin.version>
+		
+		<!-- Openshift -->
+		<openshiftnamespace>dgw-t</openshiftnamespace>
+		<fabric8.resourceDir>src/main/fabric8</fabric8.resourceDir>
+		<replicas>1</replicas>
+		<fabric8-maven-plugin.version>3.5.38</fabric8-maven-plugin.version>
+		
+		<!--jacoco properties -->
+		<jacoco.version>0.8.0</jacoco.version>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.junit.reportPaths>${basedir}/target/surefire-reports</sonar.junit.reportPaths>
+		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+
+	</properties>
+
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.logstash.logback</groupId>
+				<artifactId>logstash-logback-encoder</artifactId>
+				<version>${version.logstash.logback}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${version.commons.io}</version>
+			</dependency>
+			<dependency>
+				<groupId>eu.nets.ms.dgw.commons</groupId>
+				<artifactId>netaxept-soap-client</artifactId>
+				<version>${version.netaxept-cli}</version>
+			</dependency>
+
+
+			<!-- TEST -->
+			<dependency>
+				<groupId>com.github.stefanbirkner</groupId>
+				<artifactId>system-rules</artifactId>
+				<version>1.16.0</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.jayway.restassured</groupId>
+				<artifactId>rest-assured</artifactId>
+				<version>${version.rest-assured}</version>
+			</dependency>
+			
+			<!-- Metrics and monitoring -->
+			
+			<!-- API documentation -->
+			<dependency>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-jaxrs</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<profiles>
+		<!-- Setup Spring Profiles accordingly to maven profiles -->
+		<profile>
+			<id>development</id>
+			<properties>
+				<docker.skip>true</docker.skip>
+				<spring.profiles.active>default</spring.profiles.active>
+				<fabric8.resourceDir>src/main/fabric8/default</fabric8.resourceDir>
+
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<spring.profiles.active>test</spring.profiles.active>
+				<fabric8.resourceDir>src/main/fabric8/test</fabric8.resourceDir>
+			</properties>
+		</profile>
+		<profile>
+			<id>preprod</id>
+			<properties>
+				<spring.profiles.active>preprod</spring.profiles.active>
+				<fabric8.resourceDir>src/main/fabric8/preprod</fabric8.resourceDir>
+				<openshiftnamespace>dgw-pp</openshiftnamespace>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<properties>
+				<spring.profiles.active>production</spring.profiles.active>
+				<fabric8.resourceDir>src/main/fabric8/production</fabric8.resourceDir>
+				<openshiftnamespace>dgw</openshiftnamespace>
+			</properties>
+		</profile>
+
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j-over-slf4j</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jersey</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		
+        
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+
+		<!-- Netaxept auto generated client -->
+		<dependency>
+			<groupId>eu.nets.ms.dgw.commons</groupId>
+			<artifactId>netaxept-soap-client</artifactId>
+		</dependency>
+		
+		<!-- Metrics and health-->
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+
+		<!-- Swagger generation -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-jaxrs</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.ws.rs</groupId>
+					<artifactId>jsr311-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!-- TESTING -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.stefanbirkner</groupId>
+			<artifactId>system-rules</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>version.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+			 <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                   <version>2.8.2</version>
+                   <executions>
+                      <execution>
+                         <id>default-deploy</id>
+                         <phase>deploy</phase>
+                         <goals>
+                            <goal>deploy</goal>
+                         </goals>
+                      </execution>
+                   </executions>
+               </plugin>
+			
+				<!-- We specify the Maven compiler plugin as we need to set it to Java 
+					1.8 -->
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>${maven.compiler.version}</source>
+						<target>${maven.compiler.version}</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Pass the coresponding Spring profile to surefire plugin (used in 
+				mvn test goal) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>${skip.unit.tests}</skip>
+					<argLine>@{argLine}
+						-Dspring.profiles.active=${spring.profiles.active}</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<skipITs>${skip.integration.tests}</skipITs>
+					<argLine>-Dspring.profiles.active=${spring.profiles.active}</argLine>
+					<classpathDependencyExcludes>
+						<classpathDependencyExclude>org.slf4j:log4j-over-slf4j</classpathDependencyExclude>
+					</classpathDependencyExcludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-tests</id>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					 <reportOutputDirectory>./pia-merchant-demo-bundle/target</reportOutputDirectory>
+					<show>private</show>
+          			<nohelp>true</nohelp>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8-maven-plugin.version}</version>
+				<configuration>
+					<skip>${docker.skip}</skip>
+					<verbose>true</verbose>
+					<enricher>
+						<includes>
+							<include>fmp-image</include>
+							<include>f8-prometheus</include>
+						</includes>
+						<excludes>
+							<exclude>fmp-project</exclude>
+							<exclude>f8-cd</exclude>
+							<exclude>f8-doc-link</exclude>
+							<exclude>f8-cd-doc-link</exclude>
+							<exclude>f8-cd-grafana-link</exclude>
+							<exclude>f8-icon</exclude>
+							<exclude>f8-git</exclude>
+							<exclude>f8-expose</exclude>
+							<exclude>fmp-debug</exclude>
+							<exclude>fmp-merge</exclude>
+							<exclude>fmp-remove-build-annotations</exclude>
+							<exclude>fmp-volume-permission</exclude>
+							<exclude>fmp-controller</exclude>
+							<exclude>fmp-ianaservice</exclude>
+							<exclude>fmp-pod-annotation</exclude>
+							<exclude>fmp-name</exclude>
+							<exclude>fmp-service</exclude>
+							<exclude>f8-maven-issue-mgmt</exclude>
+							<exclude>wildfly-swarm-health-check</exclude>
+							<exclude>karaf-health-check</exclude>
+							<exclude>vertx-health-check</exclude>
+							<exclude>docker-health-check</exclude>
+							<exclude>f8-watch</exclude>
+						</excludes>
+						<config>
+							<f8-prometheus>
+								<prometheusPort>9779</prometheusPort>
+							</f8-prometheus>
+							<fmp-image>
+								<pullPolicy>Always</pullPolicy>
+							</fmp-image>
+						</config>
+					</enricher>
+					<images>
+						<image>
+							<name>${openshiftnamespace}/pia-merchant-service:${project.version}</name>
+							<build>
+								<fromExt>
+									<name>openjdk18-openshift:1.2-7</name>
+									<namespace>openshift</namespace>
+									<kind>ImageStreamTag</kind>
+								</fromExt>
+								<assembly>
+									<basedir>/deployments</basedir>
+									<descriptorRef>bin</descriptorRef>
+								</assembly>
+								<env>
+									<JAVA_APP_DIR>/deployments</JAVA_APP_DIR>
+								</env>
+								<ports>
+									<port>8080</port>
+									<port>8081</port>
+									<port>8778</port>
+									<port>9779</port>
+								</ports>
+							</build>
+						</image>
+					</images>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>fabric8</id>
+						<goals>
+							<goal>resource</goal>
+							<goal>build</goal>
+							<goal>apply</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.e-gineering</groupId>
+				<artifactId>gitflow-helper-maven-plugin</artifactId>
+				<version>${gitflow.helper.plugin.version}</version>
+				<configuration>
+					<releaseDeploymentRepository>
+						dgw_releases::default::https://nexus.bbsas.no:9006/repository/dgw_releases::false
+					</releaseDeploymentRepository>
+					<stageDeploymentRepository>
+						dgw_stage::default::https://nexus.bbsas.no:9006/repository/dgw_stage::false
+					</stageDeploymentRepository>
+					<snapshotDeploymentRepository>
+						dgw_snapshots::default::https://nexus.bbsas.no:9006/repository/dgw_snapshots::true
+					</snapshotDeploymentRepository>
+					<masterBranchPropertyFile>maven/production.properties</masterBranchPropertyFile>
+					<supportBranchPropertyFile>maven/production.properties</supportBranchPropertyFile>
+					<hotfixBranchPropertyFile>maven/preprod.properties</hotfixBranchPropertyFile>
+					<releaseBranchPropertyFile>maven/preprod.properties</releaseBranchPropertyFile>
+					<developmentBranchPropertyFile>maven/default.properties</developmentBranchPropertyFile>
+					<otherBranchPropertyFile>maven/default.properties</otherBranchPropertyFile>
+					<undefinedBranchPropertyFile>maven/default.properties</undefinedBranchPropertyFile>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<!--goal>enforce-versions</goal -->
+							<goal>retarget-deploy</goal>
+							<goal>set-properties</goal>
+							<!--goal>tag-master</goal -->
+							<goal>promote-master</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+						is passed as VM argument when Maven the Surefire plugin is executed. -->
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+
+					</execution>
+					<!-- Ensures that the code coverage report for unit tests is created 
+						after unit tests have been run. -->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

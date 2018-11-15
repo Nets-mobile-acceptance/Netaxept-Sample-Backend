@@ -1,0 +1,83 @@
+spec:
+  replicas: ${replicas}
+  template:
+    metadata:
+      labels:
+        group: nets.eu
+        project: pia-merchant-service
+        provider: fabric8
+    spec:
+      volumes:
+        - name: secure-properties-volume
+          secret:
+            secretName: secure-pia-properties
+        - name: hawkular-openshift-agent
+          configMap:
+            name: hawkular-pia-service-agent
+            defaultMode: 420
+      containers:
+      - args:
+         - /usr/local/s2i/run
+         - "${appargs}"
+        name: pia-merchant-service
+        volumeMounts:
+          - 
+            name: secure-properties-volume
+            mountPath: /etc/secrets
+        ports:
+          -
+            name: http
+            containerPort: 8080
+            protocol: TCP
+          -
+            name: managementhttp
+            containerPort: 8081
+            protocol: TCP
+          -
+            name: prometheus
+            containerPort: 9779
+            protocol: TCP
+          -
+            name: jolokia
+            containerPort: 8778
+            protocol: TCP
+        env:
+          - 
+            name: JAVA_OPTIONS
+            value: ${javaoptions}
+          - 
+            name: SPRING_PROFILES_ACTIVE
+            value: preprod
+          -
+            name: NETAXEPT_HOST
+            value: epayment.nets.eu
+          -
+            name: NETAXEPT_PORT
+            value: 443
+        resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /management/health
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /management/info
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 20
+          timeoutSeconds: 5
+          periodSeconds: 20
+          successThreshold: 1
+          failureThreshold: 3

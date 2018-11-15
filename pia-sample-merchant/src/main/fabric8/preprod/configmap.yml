@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hawkular-pia-service-agent
+data:
+  hawkular-openshift-agent: |-
+    endpoints:
+    - type: prometheus
+      protocol: http
+      port: 8081
+      path: /management/prometheus
+      collection_interval: 30s
+      metrics:
+      - name: threads
+        id: threads
+      - name: counter_HomeController
+        id: counter_HomeController
+      - name: gc_ps_marksweep_count
+        id: gc_ps_marksweep_count
+      - name: gc_ps_scavenge_count
+        id: gc_ps_scavenge_count
+      - name: heap_used
+        id: heap_used

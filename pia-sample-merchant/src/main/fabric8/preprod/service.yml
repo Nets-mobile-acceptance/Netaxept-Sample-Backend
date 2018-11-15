@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/path: /management/prometheus
+    prometheus.io/port: 8081
+    prometheus.io/scrape: true
+  labels:
+    expose: 'false'
+    project: pia-merchant-service
+  name: pia-merchant-service
+spec:
+  ports:
+    -
+      name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  selector:
+    group: nets.eu
+    project: pia-merchant-service
+    provider: fabric8
+  type: ClusterIP
+  sessionAffinity: None
