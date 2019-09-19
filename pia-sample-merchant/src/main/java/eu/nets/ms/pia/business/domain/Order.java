@@ -47,6 +47,9 @@ public class Order {
     @NotNull
     @Column(name = "PSP_TRANSACTION_ID", nullable = false)
     private String psptransactionid;
+    
+    @Column(name = "METHOD", nullable = true)
+    private String method;
 	
 	@Column(name = "TIMESTAMP_CREATED", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -103,4 +106,13 @@ public class Order {
 	public void setPspTransactionid(String pspTransactionid) {
 		this.psptransactionid = pspTransactionid;
 	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	
 }

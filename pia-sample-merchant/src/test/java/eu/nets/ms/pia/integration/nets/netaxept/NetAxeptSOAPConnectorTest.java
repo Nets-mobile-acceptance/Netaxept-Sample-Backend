@@ -7,8 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.datacontract.schemas._2004._07.bbs_epayment.ProcessResponse;
@@ -30,6 +28,8 @@ import epayment.bbs.INetaxeptProcessGenericErrorFaultFaultMessage;
 import epayment.bbs.INetaxeptProcessMerchantTranslationExceptionFaultFaultMessage;
 import epayment.bbs.INetaxeptProcessNotSupportedExceptionFaultFaultMessage;
 import epayment.bbs.INetaxeptProcessValidationExceptionFaultFaultMessage;
+import eu.nets.ms.pia.business.sync.SyncService;
+import eu.nets.ms.pia.business.sync.SyncServiceImpl;
 import eu.nets.ms.pia.integration.PspConnector;
 import eu.nets.ms.pia.service.model.PaymentProcessRequest;
 import eu.nets.ms.pia.service.model.PaymentProcessResponse;
@@ -38,6 +38,12 @@ import eu.nets.ms.pia.testutils.Utils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetAxeptSOAPConnectorTest {
+	
+	private static boolean once = false;
+	
+	@Spy
+	private static SyncServiceImpl syncService = new SyncServiceImpl();
+	
 	
 	@Mock
 	private INetaxept netaxept;
@@ -51,6 +57,10 @@ public class NetAxeptSOAPConnectorTest {
 	
 	@Before
 	public void setup(){
+		if(!once){
+			syncService.init();
+			once=true;
+		}
 		when(config.getCancelUrl()).thenReturn("https://cancel");
 		when(config.getRedirectUrl()).thenReturn("https://redirect");
 		when(config.getTimeout()).thenReturn(2000);

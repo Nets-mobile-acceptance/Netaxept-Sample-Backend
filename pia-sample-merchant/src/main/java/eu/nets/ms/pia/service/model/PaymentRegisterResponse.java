@@ -1,5 +1,7 @@
 package eu.nets.ms.pia.service.model;
 
+import java.util.Optional;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,6 +27,9 @@ public class PaymentRegisterResponse {
 	@ApiModelProperty(value = "Redirect URL for sucessful payemnt", required = true)
 	private final String redirectOK;
 	
+	@ApiModelProperty(value = "Wallet URL for app switch", required = false)
+	private final String walletUrl;
+	
 	@NotNull(message = "Redirect URL Cancel must be provided")
 	@ApiModelProperty(value = "Redirect URL for cancelled payemnt", required = true)
 	private final String redirectCancel;
@@ -32,6 +37,7 @@ public class PaymentRegisterResponse {
 	private PaymentRegisterResponse(Builder builder) {
 		this.transactionId = builder.transactionId;
 		this.redirectOK = builder.redirectOK;
+		this.walletUrl = builder.walletUrl;
 		this.redirectCancel = builder.redirectCancel;
 		
 	}
@@ -44,6 +50,11 @@ public class PaymentRegisterResponse {
 
 	public String getRedirectOK() {
 		return redirectOK;
+	}
+
+
+	public String getWalletUrl() {
+		return walletUrl;
 	}
 
 
@@ -66,6 +77,7 @@ public class PaymentRegisterResponse {
 		private String transactionId;
 		private String redirectOK;
 		private String redirectCancel;
+		private String walletUrl;
 		
 		public Builder transactionId(String transactionId) {
 			this.transactionId = transactionId;
@@ -73,6 +85,10 @@ public class PaymentRegisterResponse {
 		}
 		public Builder redirectOK(String redirectOK) {
 			this.redirectOK = redirectOK;
+			return this;
+		}
+		public Builder walletUrl(String walletUrl) {
+			this.walletUrl = walletUrl;
 			return this;
 		}
 		public Builder redirectCancel(String redirectCancel) {

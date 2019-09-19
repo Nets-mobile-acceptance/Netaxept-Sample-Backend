@@ -1,9 +1,13 @@
 package eu.nets.ms.pia.integration.nets.netaxept;
 
 import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.APPLE_PAY;
-import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.PAY_PAL;
 import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.EASY_PAY;
+import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.PAY_PAL;
+import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.SWISH;
+import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.VIPPS;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.datacontract.schemas._2004._07.bbs_epayment.ArrayOfPaymentMethodAction;
+import org.datacontract.schemas._2004._07.bbs_epayment.Customer;
 import org.datacontract.schemas._2004._07.bbs_epayment.Environment;
 import org.datacontract.schemas._2004._07.bbs_epayment.Order;
 import org.datacontract.schemas._2004._07.bbs_epayment.PaymentInfo;
@@ -22,7 +27,6 @@ import org.datacontract.schemas._2004._07.bbs_epayment.QueryRequest;
 import org.datacontract.schemas._2004._07.bbs_epayment.Recurring;
 import org.datacontract.schemas._2004._07.bbs_epayment.RegisterRequest;
 import org.datacontract.schemas._2004._07.bbs_epayment.Terminal;
-import org.datacontract.schemas._2004._07.bbs_epayment.Customer;
 
 import epayment.bbs.Process;
 import epayment.bbs.ProcessResponse;
@@ -44,6 +48,7 @@ public class NetAxeptRequestMapper {
 	private static final String DEFAULT_DATE = "19700101";
 	private static final String DEFAULT_COUNTRY_CODE = "GB";
 	private static final String WS_PLATFORM = "JAX-WS";
+	private static final String ENCODING = "UTF-8";
 	
 	private enum NetaxeptOperation { AUTH, SALE, CAPTURE, CREDIT, ANNUL,VERIFY };
 	
@@ -54,6 +59,9 @@ public class NetAxeptRequestMapper {
 		registerRequest.setEnvironment(new Environment());
 		registerRequest.setTerminal(new Terminal());
 		boolean terminalUsedByConsumer = true;
+		
+		// reset redirectUrl to default value
+		cfg.setRedirectUrl();
 		
 		//Setup Base data
 		registerRequest.setTransactionReconRef(request.getOrderNumber());
@@ -127,6 +135,20 @@ public class NetAxeptRequestMapper {
 			// For in-app payments set service type to 'M' except Paypal
 			registerRequest.setServiceType("B");
 		}
+		//Stage transaction using Swish / Vipps
+		else if(request.getMethod().isPresent() && (request.getMethod().get().equals(SWISH) || request.getMethod().get().equals(VIPPS))){
+			ArrayOfPaymentMethodAction actionList = new ArrayOfPaymentMethodAction();
+			PaymentMethodAction action = new PaymentMethodAction();
+			action.setPaymentMethod(request.getMethod().get().getId());
+			actionList.getPaymentMethodAction().add(action);
+			registerRequest.getTerminal().setPaymentMethodActionList(actionList);
+			Customer customer = new Customer();
+			customer.setPhoneNumber(request.getPhoneNumber().orElse(null));
+			if(request.getRedirectUrl().isPresent()) {
+				cfg.setRedirectUrl(request.getRedirectUrl().get());
+			}
+			registerRequest.setCustomer(customer);
+		}
 		//Setup Env
 		registerRequest.getEnvironment().setWebServicePlatform(WS_PLATFORM);
 		
@@ -178,6 +200,7 @@ public class NetAxeptRequestMapper {
 		}
 		return PaymentRegisterResponse.newBuilder()
 				.transactionId(response.getRegisterResult().getTransactionId())
+				.walletUrl(response.getRegisterResult().getWalletURL())
 				.redirectOK(cfg.getRedirectUrl())
 				.redirectCancel(cfg.getCancelUrl())
 				.build();
@@ -215,6 +238,23 @@ public class NetAxeptRequestMapper {
 				.transactionId(response.getQueryResult().getTransactionId())
 				.withToken(cardToken)
 				.build();
+	}
+	public static PaymentProcessResponse mapPaymentInfoToProcessResponse(PaymentInfo paymentInfo) {
+		String responseCode = "ERROR";
+		String operation = "AUTH";
+		if(paymentInfo.getSummary().isAuthorized()){
+			responseCode = "OK";
+			if(paymentInfo.getSummary().getAmountCaptured() == paymentInfo.getOrderInformation().getAmount()){
+				operation = "SALE";
+			}
+		}
+		 return PaymentProcessResponse.newBuilder()
+			   		.operation(mapOperation(operation))
+			   		.transactionId(paymentInfo.getTransactionId())
+			   		.authorizationId(paymentInfo.getSummary().getAuthorizationId())
+			   		.executionTimestamp(paymentInfo.getQueryFinished())
+			   		.responseCode(responseCode)
+			   		.build();
 	}
 	
 	public static Process mapAuthorizationRequest(PaymentProcessRequest request, NetAxeptConfig cfg) {

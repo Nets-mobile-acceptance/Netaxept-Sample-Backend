@@ -3,6 +3,7 @@
  */
 package eu.nets.ms.pia.integration.nets.netaxept;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 
+import org.datacontract.schemas._2004._07.bbs_epayment.PaymentInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,9 +24,13 @@ import epayment.bbs.Query;
 import epayment.bbs.Register;
 import epayment.bbs.RegisterResponse;
 import eu.nets.ms.pia.business.domain.PaymentQueryResponse;
+import eu.nets.ms.pia.business.sync.SyncService;
 import eu.nets.ms.pia.integration.PspConnector;
 import eu.nets.ms.pia.integration.nets.netaxept.exception.NetAxeptProviderException;
 import eu.nets.ms.pia.integration.nets.netaxept.exception.ServiceNotFoundException;
+import eu.nets.ms.pia.service.model.Method;
+import eu.nets.ms.pia.service.model.MethodEnum;
+import eu.nets.ms.pia.service.model.Operation;
 import eu.nets.ms.pia.service.model.PaymentProcessRequest;
 import eu.nets.ms.pia.service.model.PaymentProcessResponse;
 import eu.nets.ms.pia.service.model.PaymentRegisterRequest;
@@ -39,9 +45,13 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	private static final String SERVICE_HOST_SUFFIX = "_HOST";
 	private static final String SERVICE_PORT_SUFFIX = "_PORT";
 	private static final String ERROR_TEXT_UNAVAILABLE = "Unable to find env variables defining Netaxept end point";
+	private static final long TMO_WAIT_CALLBACK = 10000;
 
 	@Inject
-	NetAxeptConfig config;
+	private NetAxeptConfig config;
+	
+	@Inject 
+	private SyncService syncService;
 
 	
 	synchronized INetaxept createEndPoint(Optional<String> merchantId) {
@@ -107,6 +117,7 @@ public class NetAxeptSOAPConnector implements PspConnector {
 			Register regRequest = NetAxeptRequestMapper.mapRegisterRequest(request,additionalData, config);
 			LOGGER.info("registerTransaction for order:'{}' {} {}", request.getOrderNumber(), request.getAmount().getTotalAmount(), request.getAmount().getCurrencyCode());
 			RegisterResponse response = createEndPoint(request.getMerchantId()).register(regRequest);
+			setupSynchronization(request, response);
 			return NetAxeptRequestMapper.mapRegisterResponse(response, config);
 		} catch (Exception e) {
 			LOGGER.error(ERROR_COMMUNICATING_WITH_NETAXEPT, e);
@@ -115,19 +126,47 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	}
 	
 	/**
+	 * Setup synchronization.
 	 * 
-	 * Process method is called with the operation AUTH
+	 * This method creates a lock for payment methods for which callbacks will be issued in the future.
+	 * These lock are used to synchronize between the threads of the callback and client calls.
+	 *
+	 * @param request the request
+	 * @param response the response
+	 */
+	private void setupSynchronization(PaymentRegisterRequest request, RegisterResponse response) {
+		Method method = request.getMethod().orElse(null);
+		if(method != null){
+			MethodEnum methodEnum = MethodEnum.create(method.getId());
+			if(MethodEnum.SWISH.equals(methodEnum) || MethodEnum.VIPPS.equals(methodEnum)){
+				syncService.createLock(response.getRegisterResult().getTransactionId());
+			}
+		}
+	}
+	
+	/**
+	 * Two scenarios:
+	 * 1) the payment methos used is such that authorization is done inside a Payment wallet.
+	 *    in these cases we need to wait for the Netaxept callback and query for this result.
+	 *    We do not trigger an authorization from here.
+	 *    
+	 * 2) Process method is called with the operation AUTH
+	 *    This is used for payment methods like e.g. Card.
 	 * 
 	 * @see <a href=https://shop.nets.eu/web/partners/process>Netaxept API - Process(AUTH)</a>
 	 */
 	@Override
 	public PaymentProcessResponse authorizeTransaction(PaymentProcessRequest request) {
 		try {
-
-			Process authRequest = NetAxeptRequestMapper.mapAuthorizationRequest(request, config);
-
-			ProcessResponse processResponse = createEndPoint(request.getMerchantId()).process(authRequest);
-			return NetAxeptRequestMapper.mapAuthorizationResponse(processResponse);
+			if (syncService.lockExists(request.getTransactionId())){
+				syncService.waitForLockAvailable(request.getTransactionId(), TMO_WAIT_CALLBACK);
+				PaymentInfo paymentInfo = getPaymentInfo(request.getTransactionId(), request.getMerchantId());
+				return NetAxeptRequestMapper.mapPaymentInfoToProcessResponse(paymentInfo);
+			}else{
+				Process authRequest = NetAxeptRequestMapper.mapAuthorizationRequest(request, config);
+				ProcessResponse processResponse = createEndPoint(request.getMerchantId()).process(authRequest);
+				return NetAxeptRequestMapper.mapAuthorizationResponse(processResponse);
+			}
 		} catch (Exception e) {
 			LOGGER.error(ERROR_COMMUNICATING_WITH_NETAXEPT, e);
 			throw new NetAxeptProviderException(e.getMessage(), e);
@@ -164,11 +203,11 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	@Override
 	public PaymentProcessResponse finalizeTransaction(PaymentProcessRequest request) {
 		try {
-
 			Process finalizeRequest = NetAxeptRequestMapper.mapFinalizationRequest(request, config);
 
 			ProcessResponse processResponse = createEndPoint(request.getMerchantId()).process(finalizeRequest);
 			return NetAxeptRequestMapper.mapFinalizationResponse(processResponse);
+			
 		} catch (Exception e) {
 			LOGGER.error(ERROR_COMMUNICATING_WITH_NETAXEPT, e);
 			throw new NetAxeptProviderException(e.getMessage(), e);
@@ -208,6 +247,21 @@ public class NetAxeptSOAPConnector implements PspConnector {
 
 			epayment.bbs.QueryResponse response = createEndPoint(merchantId).query(query);
 			return NetAxeptRequestMapper.mapQueryResponse(response, config);
+		} catch (Exception e) {
+			LOGGER.error(ERROR_COMMUNICATING_WITH_NETAXEPT, e);
+			throw new NetAxeptProviderException(e.getMessage(), e);
+		}
+	}
+	
+	private PaymentInfo getPaymentInfo(String transactionId, Optional<String> merchantId) {
+		try {
+			Query query = NetAxeptRequestMapper.mapQueryRequest(transactionId, merchantId, config);
+
+			epayment.bbs.QueryResponse response = createEndPoint(merchantId).query(query);
+			if(response == null || response.getQueryResult() == null){
+				throw new NetAxeptProviderException("Query response is null");
+			}
+			return (PaymentInfo)response.getQueryResult();
 		} catch (Exception e) {
 			LOGGER.error(ERROR_COMMUNICATING_WITH_NETAXEPT, e);
 			throw new NetAxeptProviderException(e.getMessage(), e);

@@ -49,11 +49,17 @@ public class PaymentRegisterRequest {
 	@ApiModelProperty(value = "Payment data. Any data that may be needed for the payment method used.", required = false)
 	private final Optional<String> paymentData;
 	
+	@ApiModelProperty(value = "Phone number to be used for alternative payment wallets", required = false)
+	private final Optional<String> phoneNumber;
+	
+	@ApiModelProperty(value = "Client defined redirectUrl. Used for wallet payments", required = false)
+	private final Optional<String> redirectUrl;
+	
 	@ApiModelProperty(value = "Store card for future use", required = false)
 	private final boolean storeCard;
 		
 	/** This parameter is for facilitating testing.
-	 *  The scenario is when you set upp different Netaxept test accounts for different test purposes.
+	 *  The scenario is when you set up different Netaxept test accounts for different test purposes.
 	 *  This parameter gives control as to which account to use. It is used as key for selecting correct set of Netaxept credentials.
 	 *  If not present default parameters are used.
 	 *  */
@@ -74,6 +80,8 @@ public class PaymentRegisterRequest {
 		this.method = Optional.ofNullable(builder.method);
 		this.paymentData = Optional.ofNullable(builder.paymentData);
 		this.merchantId = Optional.ofNullable(builder.merchantId);
+		this.phoneNumber = Optional.ofNullable(builder.phoneNumber);
+		this.redirectUrl = Optional.ofNullable(builder.redirectUrl);
 		if (builder.items != null) {
 			this.items = Optional.of(Collections.unmodifiableList(builder.items));
 		} else {
@@ -92,6 +100,15 @@ public class PaymentRegisterRequest {
 		return merchantId;
 	}
 	
+	public Optional<String> getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public Optional<String> getRedirectUrl() {
+		return redirectUrl;
+	}
+
 	public void setMerchantId(Optional<String> merchantId) {
 		this.merchantId = merchantId;
 	}
@@ -144,6 +161,8 @@ public class PaymentRegisterRequest {
 	@JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
 	public static class Builder {
 		private String customerId;
+		private String redirectUrl;
+		private String phoneNumber;
 		private String merchantId;
 		private String cardId;
 		private boolean storeCard = false;
@@ -155,6 +174,14 @@ public class PaymentRegisterRequest {
 		
 		public Builder customerId(String customerId){
 			this.customerId = customerId;
+			return this;
+		}
+		public Builder phoneNumber(String phoneNumber){
+			this.phoneNumber = phoneNumber;
+			return this;
+		}
+		public Builder redirectUrl(String redirectUrl){
+			this.redirectUrl = redirectUrl;
 			return this;
 		}
 		

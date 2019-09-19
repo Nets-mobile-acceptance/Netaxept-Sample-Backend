@@ -31,6 +31,7 @@ import eu.nets.ms.pia.integration.PspConnector;
 import eu.nets.ms.pia.service.model.CardTokenDto;
 import eu.nets.ms.pia.service.model.Method;
 import eu.nets.ms.pia.service.model.MethodEnum;
+import eu.nets.ms.pia.service.model.Operation;
 import eu.nets.ms.pia.service.model.PaymentMethods;
 import eu.nets.ms.pia.service.model.PaymentProcessRequest;
 import eu.nets.ms.pia.service.model.PaymentProcessResponse;
@@ -80,6 +81,8 @@ public class PaymentServiceImpl implements PaymentService {
 	public static final Method EASY_PAY = new Method(MethodEnum.EASY_PAY);
 	public static final Method APPLE_PAY = new Method(MethodEnum.APPLE_PAY);
 	public static final Method PAY_PAL = new Method(MethodEnum.PAY_PAL);
+	public static final Method VIPPS = new Method(MethodEnum.VIPPS);
+	public static final Method SWISH = new Method(MethodEnum.SWISH);
 	
 	@Inject
 	@Qualifier("NetaxeptSOAP")
@@ -209,28 +212,24 @@ public class PaymentServiceImpl implements PaymentService {
 			PaymentProcessResponse finalizeResponse;
 
 			if (orderservice.placeOrder(paymentId) == true) {
-				finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder()
-						.operation(COMMIT)
-						.transactionId(authResponse.getTransactionId())
-						.merchantId(merchantId)
-						.description(authorizationRq.getDescription())
-						.transactionReference(reference)
-						.build());
-				if (ResponseCode.OK.name().equals(finalizeResponse.getResponseCode())) {
-					orderservice.finalizeOrder(paymentId, PaymentState.PAID);
-				} else {
-					// COMMIT failed, revert auth, and mark order as cancelled
-					connector.finalizeTransaction(PaymentProcessRequest.newBuilder()
-							.operation(ROLLBACK)
-							.transactionId(authResponse.getTransactionId())
-							.merchantId(merchantId)
-							.transactionReference(reference)
-							.description(authorizationRq.getDescription())
-							.build());
-
-					orderservice.finalizeOrder(paymentId, PaymentState.CANCELLED);
-
+				boolean orderIsPaid = false;
+				
+				// Check if funds have already been captured
+				if(isOrderPaid(authResponse)){
+					orderIsPaid = true;
+					finalizeResponse = authResponse;
+				}else{
+					finalizeResponse = capturePayment(paymentId, merchantId, reference, authorizationRq, authResponse);
+					orderIsPaid = ResponseCode.OK.name().equals(finalizeResponse.getResponseCode());
 				}
+				
+				// Report back that the order has been paid
+				if(orderIsPaid){
+					orderservice.finalizeOrder(paymentId, PaymentState.PAID);
+				}else{
+					orderservice.finalizeOrder(paymentId, PaymentState.CANCELLED);
+				}
+				
 			} else {
 				LOGGER.error("Order " + paymentId + " Not placed. Rolling back transaction");
 				finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder().operation(ROLLBACK)
@@ -251,6 +250,33 @@ public class PaymentServiceImpl implements PaymentService {
 		orderservice.finalizeOrder(paymentId, PaymentState.CANCELLED);
 
 		return authResponse;
+	}
+
+	private PaymentProcessResponse capturePayment(String paymentId, String merchantId, String reference,
+			PaymentProcessRequest authorizationRq, PaymentProcessResponse authResponse) {
+		PaymentProcessResponse finalizeResponse;
+		finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder()
+				.operation(COMMIT)
+				.transactionId(authResponse.getTransactionId())
+				.merchantId(merchantId)
+				.description(authorizationRq.getDescription())
+				.transactionReference(reference)
+				.build());
+		if (!ResponseCode.OK.name().equals(finalizeResponse.getResponseCode()))  {
+			// COMMIT failed, revert auth
+			connector.finalizeTransaction(PaymentProcessRequest.newBuilder()
+					.operation(ROLLBACK)
+					.transactionId(authResponse.getTransactionId())
+					.merchantId(merchantId)
+					.transactionReference(reference)
+					.description(authorizationRq.getDescription())
+					.build());
+		}
+		return finalizeResponse;
+	}
+
+	private boolean isOrderPaid(PaymentProcessResponse authResponse) {
+		return Operation.PAY.equals(authResponse.getOperation()) ? true:false;
 	}
 
 	/* (non-Javadoc)
@@ -369,6 +395,9 @@ public class PaymentServiceImpl implements PaymentService {
 		order.setAmount(amount);
 		order.setConsumer(persistenceService.findConsumer(request.getCustomerId()));
 		order.setPspTransactionid(transactionId);
+		if(request.getMethod().isPresent()){
+			order.setMethod(request.getMethod().get().getId());
+		}
 		order.setPaymentState(PaymentState.INITIALIZED);
 		return order;
 	}

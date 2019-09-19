@@ -29,12 +29,12 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "payment")
 @Path("payment")
 public interface MerchantPaymentRESTService {
-    static final String API_VERSION="1.2";
+    static final String API_VERSION="2.0";
     
     
     @Path("/{merchantId : (([^/])+/)?}register")
-    @Produces({ "application/vnd.nets.pia.v"+API_VERSION+"+json;charset=utf-8"})
-    @Consumes({ "application/vnd.nets.pia.v"+API_VERSION+"+json;charset=utf-8"})
+    @Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
+    @Consumes({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
     @POST 
     @ApiOperation(value = "Registers a payment request")
     @ApiResponses(value = { 
@@ -47,42 +47,31 @@ public interface MerchantPaymentRESTService {
    
     
     
-    @Path("/{merchantId : (([^/])+/)?}{transactionId}/commit")
+    @Path("/{merchantId : (([^/])+/)?}{transactionId}")
     @Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
+    @Consumes({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
     @PUT 
-    @ApiOperation(value = "Performs the payment")
+    @ApiOperation(value = "Processes a transaction")
     @ApiResponses(value = { 
-    		@ApiResponse(code = 202, message = "Payment processing started OK",response = PaymentProcessResponse.class),
+    		@ApiResponse(code = 202, message = "Request processed OK",response = PaymentProcessResponse.class),
     		@ApiResponse(code = 404, message = "Payment not found.", response = ProcessingError.class),
             @ApiResponse(code = 500, message = "Error processing the request. Try again later.", response = ProcessingError.class),
     		@ApiResponse(code = 503, message = "Downstream PSP error.", response = ProcessingError.class)
     		})
-    public Response commitPayment(@PathParam(value = "transactionId")String paymentId, @PathParam("merchantId") String merchantId, @Context HttpServletRequest httpServletRequest);
+    public Response processPayment(@PathParam(value = "transactionId")String paymentId, @PathParam("merchantId") String merchantId, @ApiParam(value = "Processing option", required = true)ProcessingOption processingOption, @Context HttpServletRequest httpServletRequest);
    
-    @Path("/{merchantId : (([^/])+/)?}{transactionId}/rollback")
+    @Path("/{merchantId : (([^/])+/)?}{transactionId}")
     @Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
     @DELETE
     @ApiOperation(value = "")
     @ApiResponses(value = { 
     		@ApiResponse(code = 204, message = "Payment deleted"),
     		@ApiResponse(code = 404, message = "Payment not found.", response = ProcessingError.class),
-            @ApiResponse(code = 500, message = "Error processing the request. Try again later.", response = ProcessingError.class),
+            @ApiResponse(code = 500, message = "Error processing the request. Please Try again later.", response = ProcessingError.class),
     		@ApiResponse(code = 503, message = "Downstream PSP error.", response = ProcessingError.class)
     		})
     public Response rollbackPayment(@PathParam(value = "transactionId")String paymentId, @PathParam("merchantId") String merchantId, @Context HttpServletRequest httpServletRequest);
     
-    @Path("/{merchantId : (([^/])+/)?}{transactionId}/storecard")
-    @Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
-    @PUT 
-    @ApiOperation(value = "Validates a card and stores for future use")
-    @ApiResponses(value = { 
-    		@ApiResponse(code = 202, message = "Card stored OK",response = PaymentProcessResponse.class),
-            @ApiResponse(code = 404, message = "Transaction not found.", response = ProcessingError.class),
-            @ApiResponse(code = 500, message = "Error processing the request. Try again later.", response = ProcessingError.class),
-            @ApiResponse(code = 503, message = "Downstream PSP error.", response = ProcessingError.class)
-            })
-    public Response validateAndStoreCard(@PathParam(value = "transactionId")String paymentId, @PathParam("merchantId") String merchantId, @Context HttpServletRequest httpServletRequest);
-
     @Path("/methods")
     @Produces({ MediaType.APPLICATION_JSON + ";charset=utf-8;version="+API_VERSION})
     @GET 

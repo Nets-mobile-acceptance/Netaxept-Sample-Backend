@@ -14,6 +14,7 @@ public class NetAxeptConfig {
 	private static final String NETAXEPT_TOKEN_KEY = "netaxeptToken";
 	private static final String NETAXEPT_PASSWORD_KEY = "netaxeptPassword";
 	private static final String NETAXEPT_USER_KEY = "netaxeptUser";
+	private static final String NETAXEPT_CALLBACK_SECRET_KEY = "jwtSecret";
 	private static final Logger LOGGER = LoggerFactory.getLogger(NetAxeptConfig.class);
 	private static final String SECRETS_FILE_NAME = "/secrets.properties";
 		
@@ -65,6 +66,18 @@ public class NetAxeptConfig {
 	public String getRedirectUrl() {
 		return redirectUrl;
 	}
+	
+	public void setRedirectUrl() {
+		setRedirectUrl(null);
+	}
+	
+	public void setRedirectUrl(String redirectUrl) {
+		if (redirectUrl != null) {
+			this.redirectUrl = redirectUrl;			
+		} else {
+			this.redirectUrl = "http://localhost/redirect.php";
+		}
+	}
 
 	public String getCancelUrl() {
 		return cancelUrl;
@@ -81,9 +94,11 @@ public class NetAxeptConfig {
 	public String getUserName(){
     	return getUserName(null);
     }
+	
 	public String getUserName(String section){
 		return getSecretOrDefault(section, NETAXEPT_USER_KEY);
 	}
+	
 	public String getPassword(){
     	return getPassword(null);
     }
@@ -97,6 +112,10 @@ public class NetAxeptConfig {
 		return getSecretOrDefault(section, NETAXEPT_TOKEN_KEY);
 	}
 
+	public String getJwtSecret() {
+		return getSecretOrDefault(null, NETAXEPT_CALLBACK_SECRET_KEY);
+	}
+		
 	private String getSecretOrDefault(String section, String key) {
 		if(section == null){
 			return secrets.getSecret(key);

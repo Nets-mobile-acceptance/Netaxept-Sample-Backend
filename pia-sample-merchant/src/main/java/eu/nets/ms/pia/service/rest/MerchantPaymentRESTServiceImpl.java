@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import eu.nets.ms.pia.business.logic.PaymentService;
 import eu.nets.ms.pia.exception.BusinessServiceException;
 import eu.nets.ms.pia.exception.PspException;
+
 import eu.nets.ms.pia.service.model.PaymentProcessResponse;
 import eu.nets.ms.pia.service.model.PaymentRegisterRequest;
 import eu.nets.ms.pia.service.model.PaymentRegisterResponse;
@@ -55,23 +56,27 @@ public class MerchantPaymentRESTServiceImpl implements MerchantPaymentRESTServic
 		}
 	}
 
-	
-
 	@Override
-	public Response commitPayment(String paymentId, String merchantId, HttpServletRequest httpServletRequest) {
+	public Response processPayment(String paymentId, String merchantId, ProcessingOption processingOption,	HttpServletRequest httpServletRequest) {
 		try {
 			if(merchantId != null && !merchantId.isEmpty()){
 				merchantId = merchantId.replaceAll("\\/", "");
 			}else{
 				merchantId=null;
 			}
-			PaymentProcessResponse response = service.process(paymentId, merchantId);
+			PaymentProcessResponse response = null;
+			if(Operation.COMMIT.equals(processingOption.getOperation())){
+				response = service.process(paymentId, merchantId);
+			}else if(Operation.VERIFY.equals(processingOption.getOperation())){
+				response = service.verify(paymentId, merchantId);
+			}
+			
 			return ResponseUtils.createResponse(HttpStatus.ACCEPTED.value(), response);
 		} catch (Exception ex) {
 			return interpretException(ex); 
 		}
 	}
-
+	
 	@Override
 	public Response rollbackPayment(String paymentId, String merchantId, HttpServletRequest httpServletRequest) {
 		try {
@@ -89,20 +94,7 @@ public class MerchantPaymentRESTServiceImpl implements MerchantPaymentRESTServic
 		}
 	}
 
-	@Override
-	public Response validateAndStoreCard(String paymentId, String merchantId, HttpServletRequest httpServletRequest) {
-		try {
-			if(merchantId != null && !merchantId.isEmpty()){
-				merchantId = merchantId.replaceAll("\\/", "");
-			}else{
-				merchantId=null;
-			}
-			PaymentProcessResponse response = service.verify(paymentId, merchantId);
-			return ResponseUtils.createResponse(HttpStatus.ACCEPTED.value(), response);
-		} catch (Exception ex) {
-			return interpretException(ex); 
-		}
-	}
+	
 	
 	@Override
 	public Response getPaymentMethods(String consumerId, HttpServletRequest httpServletRequest) {
@@ -148,9 +140,4 @@ public class MerchantPaymentRESTServiceImpl implements MerchantPaymentRESTServic
 			return ResponseUtils.createResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), error);
 		}
 	}
-
-
-
-	
-
 }

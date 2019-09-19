@@ -9,7 +9,10 @@ public enum MethodEnum {
 	DANKORT("Dankort", "Dankort", 0L),
 	PAY_PAL("PayPal", "PayPal", 0L),
 	DINERS_INT("DinersClubInternational", "Diners Club", 0L),
-	JCB("JCB", "JCB", 0L);
+	JCB("JCB", "JCB", 0L),
+	SWISH("SwishM", "Swish", 0L),
+	VIPPS("Vipps", "Vipps", 0L),
+	MAESTRO ("Maestro", "Maestro", 0L);
 	
 	private String id;
 	private String displayName;
@@ -40,6 +43,12 @@ public enum MethodEnum {
 			return MethodEnum.DINERS_INT;
 		case "JCB":
 			return MethodEnum.JCB;
+		case "SwishM":
+			return MethodEnum.SWISH;
+		case "Vipps":
+			return MethodEnum.VIPPS;
+		case "Maestro":
+			return MethodEnum.MAESTRO;
 		default:
 			return null;
 		}

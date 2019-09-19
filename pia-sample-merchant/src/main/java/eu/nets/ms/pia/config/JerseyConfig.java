@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.wadl.internal.WadlResource;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import eu.nets.ms.pia.service.rest.CallbackRESTServiceImpl;
 import eu.nets.ms.pia.service.rest.JsonProcessingExceptionMapper;
 import eu.nets.ms.pia.service.rest.MerchantPaymentRESTService;
 import eu.nets.ms.pia.service.rest.MerchantPaymentRESTServiceImpl;
@@ -20,7 +21,7 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 @Configuration
 @Component
-@ApplicationPath("/pia/merchantdemo/v1")
+@ApplicationPath("/pia/merchantdemo/v2")
 public class JerseyConfig extends ResourceConfig {
 	private static final String LOGGER_ID = "serviceLogger";
 	private static final int MAX_ENTITY_SIZE = 3000;
@@ -31,6 +32,7 @@ public class JerseyConfig extends ResourceConfig {
 
     private void registerEndpoints() {
     	register(MerchantPaymentRESTServiceImpl.class);
+    	register(CallbackRESTServiceImpl.class);
     	register(JsonProcessingExceptionMapper.class);
     	register(WadlResource.class);
     	register(new LoggingFeature(Logger.getLogger(LOGGER_ID), Level.FINE, LoggingFeature.Verbosity.PAYLOAD_ANY, MAX_ENTITY_SIZE));
@@ -41,7 +43,7 @@ public class JerseyConfig extends ResourceConfig {
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setSchemes(new String[]{"http"});
         beanConfig.setHost("localhost:8080");
-        beanConfig.setBasePath("/pia/merchantdemo/v1");
+        beanConfig.setBasePath("/pia/merchantdemo/v2");
         beanConfig.setVersion(MerchantPaymentRESTService.API_VERSION);
         beanConfig.setTitle("Merchant backend demo");
         beanConfig.setResourcePackage(MerchantPaymentRESTService.class.getPackage().getName());

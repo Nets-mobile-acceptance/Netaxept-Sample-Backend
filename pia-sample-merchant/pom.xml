@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.nets.ms</groupId>
 	<artifactId>pia-merchant-service</artifactId>
-	<version>1.1.3</version>
+	<version>1.4.0</version>
 	<packaging>jar</packaging>
 	<name>pia merchant service</name>
 
@@ -22,31 +22,35 @@
 		<swagger.version>1.5.12</swagger.version>
 		<version.logstash.logback>4.11</version.logstash.logback>
 		<version.commons.io>2.5</version.commons.io>
-		<version.netaxept-cli>1.0.0-TEST</version.netaxept-cli>
+		<version.netaxept-cli>2.2.14</version.netaxept-cli>
 		<version.junit>4.12</version.junit>
+		<version.jjwt>0.9.1</version.jjwt>
 		<version.mockito>1.10.19</version.mockito>
 		<version.hamcrest>2.0.0.0</version.hamcrest>
 		<version.rest-assured>2.9.0</version.rest-assured>
 		<version.sonar-maven-plugin>5.1</version.sonar-maven-plugin>
-		
+
 		<artifact.url>https://mvnrepository.com</artifact.url>
 		<spring.profiles.active>default</spring.profiles.active>
 		<skip.integration.tests>false</skip.integration.tests>
 		<skip.unit.tests>false</skip.unit.tests>
-		
+
 		<appargs></appargs>
-		
+		<!-- Netaxept -->
+		<netaxept-env></netaxept-env>
+
 		<javaoptions>-Djava.net.preferIPv4Stack=true</javaoptions>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<gitflow.helper.plugin.version>1.7.2</gitflow.helper.plugin.version>
-		
+
 		<!-- Openshift -->
 		<openshiftnamespace>dgw-t</openshiftnamespace>
 		<fabric8.resourceDir>src/main/fabric8</fabric8.resourceDir>
 		<replicas>1</replicas>
 		<fabric8-maven-plugin.version>3.5.38</fabric8-maven-plugin.version>
-		
+		<docker.skip>false</docker.skip>
+
 		<!--jacoco properties -->
 		<jacoco.version>0.8.0</jacoco.version>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -71,8 +75,13 @@
 			</dependency>
 			<dependency>
 				<groupId>eu.nets.ms.dgw.commons</groupId>
-				<artifactId>netaxept-soap-client</artifactId>
+				<artifactId>netaxept-soap-client${netaxept-env}</artifactId>
 				<version>${version.netaxept-cli}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${version.jjwt}</version>
 			</dependency>
 
 
@@ -88,9 +97,9 @@
 				<artifactId>rest-assured</artifactId>
 				<version>${version.rest-assured}</version>
 			</dependency>
-			
+
 			<!-- Metrics and monitoring -->
-			
+
 			<!-- API documentation -->
 			<dependency>
 				<groupId>io.swagger</groupId>
@@ -124,8 +133,18 @@
 				<spring.profiles.active>preprod</spring.profiles.active>
 				<fabric8.resourceDir>src/main/fabric8/preprod</fabric8.resourceDir>
 				<openshiftnamespace>dgw-pp</openshiftnamespace>
+				<netaxept-env>-prod</netaxept-env>
 			</properties>
 		</profile>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>false</skip.unit.tests>
+                <fabric8.resourceDir>src/main/fabric8/default</fabric8.resourceDir>
+                <disable-fabric8>false</disable-fabric8>
+            </properties>
+        </profile>
 		<profile>
 			<id>production</id>
 			<properties>
@@ -156,8 +175,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		
-        
+
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -167,15 +186,20 @@
 			<artifactId>flyway-core</artifactId>
 			<version>4.2.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jdk8</artifactId>
 		</dependency>
 
 		<dependency>
@@ -183,22 +207,27 @@
 			<artifactId>commons-io</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+		</dependency>
+
 		<!-- Netaxept auto generated client -->
 		<dependency>
 			<groupId>eu.nets.ms.dgw.commons</groupId>
-			<artifactId>netaxept-soap-client</artifactId>
+			<artifactId>netaxept-soap-client${netaxept-env}</artifactId>
 		</dependency>
-		
-		<!-- Metrics and health-->
+
+		<!-- Metrics and health -->
 		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
 
 		<!-- Swagger generation -->
 		<dependency>
@@ -249,20 +278,20 @@
 		</resources>
 		<pluginManagement>
 			<plugins>
-			 <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                   <version>2.8.2</version>
-                   <executions>
-                      <execution>
-                         <id>default-deploy</id>
-                         <phase>deploy</phase>
-                         <goals>
-                            <goal>deploy</goal>
-                         </goals>
-                      </execution>
-                   </executions>
-               </plugin>
-			
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+					<executions>
+						<execution>
+							<id>default-deploy</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>deploy</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
 				<!-- We specify the Maven compiler plugin as we need to set it to Java 
 					1.8 -->
 				<plugin>
@@ -275,7 +304,7 @@
 				</plugin>
 
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
+					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>3.2</version>
 				</plugin>
@@ -322,9 +351,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					 <reportOutputDirectory>./pia-merchant-demo-bundle/target</reportOutputDirectory>
 					<show>private</show>
-          			<nohelp>true</nohelp>
+					<nohelp>true</nohelp>
 				</configuration>
 			</plugin>
 			<plugin>
