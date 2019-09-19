@@ -19,12 +19,11 @@
 	run.cmd - Sets up necessary environment variables end starts the service
 	
 # Installation
-1) Edit credentials to Netaxept  
-   Edit the file etc/secrets/secrets.properties  
+1) Edit credentials to the file etc/secrets/secrets.properties  
    Enter the test credentials as supplied by Netaxept **(Note: There are Unit tests which verifies the connection to Netaxept, thus these tests require correct credentials.)**  
    Enter the test credentials as supplied by Netaxept or add "-DskipTests" to skip running tests  
    Enter the secret **jwtSecret** for generating the JSON Web Tokens(JWT) via https://jwt.io/  
-   Configure the Callback URL in Netaxept admin portal
+   Configure the Callback URL in Netaxept admin portal  
    REST Callback API:  
    ```
    Path: /2.0/status/{YOUR_JSON_WEB_TOKEN}  Method: POST
