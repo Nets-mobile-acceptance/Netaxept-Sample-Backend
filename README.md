@@ -37,18 +37,15 @@ The merchant sample backend is a reference implementation of  a merchant backend
 ![](./Resources/DesignUML.png)
 	
 # Installation
-1) Edit credentials to Netaxept
-Edit the file 
-```
-etc/secrets/secrets.properties
-```
-Enter the test credentials as supplied by Netaxept **(Note: There are Unit tests which verifies the connection to Netaxept, thus these tests require correct credentials.)**
-Enter the test credentials as supplied by Netaxept or add "-DskipTests" to skip running tests 
-Enter the jwtSecret which generates the JSON Web Tokens(jwt)from https://jwt.io/
-Configure the Callback URL in Netaxept admin portal 
-
-RESTful callback Post request:
-Path: **/2.0/status/{YOUR_JSON_WEB_TOKEN}** Method: **POST**
+1) Edit credentials to the file etc/secrets/secrets.properties  
+   Enter the test credentials as supplied by Netaxept **(Note: There are Unit tests which verifies the connection to Netaxept, thus these tests require correct credentials.)**  
+   Enter the test credentials as supplied by Netaxept or add "-DskipTests" to skip running tests  
+   Enter the secret **jwtSecret** for generating the JSON Web Tokens(JWT) via https://jwt.io/  
+   Configure the Callback URL in Netaxept admin portal  
+   REST Callback API:  
+   ```
+   Path: /2.0/status/{YOUR_JSON_WEB_TOKEN}  Method: POST
+   ```
 
 
 2) Build "pia-merchant-demo"  
@@ -100,7 +97,7 @@ The payment flow follows the following process:
 
 ## Definition and use cases
 
-Occasionally, the information concerning the success of the payment does not reach all parties or remains otherwise unclear. For example, this may be due to an interruption in data communications during the payment or the customer closing the web browser in the middle of the payment process. The most common scenario is that the customer receives confirmation that the payment is successful, but the same information doesn’t reach the merchant. Due to this, the customer never receives the ordered product although the amount is still captured from the customer's account. In order to avoid these scenarios, we recommend you to implement the Callback function as part of the payment process, especially if you have implemented direct bank payments.
+Occasionally, the information concerning the success of the payment does not reach all parties or remains otherwise unclear. For example, this may be due to an interruption in data communications during the payment or the customer closing the web browser in the middle of the payment process. The most common scenario is that the customer receives confirmation that the payment is successful, but the same information doesnâ€™t reach the merchant. Due to this, the customer never receives the ordered product although the amount is still captured from the customer's account. In order to avoid these scenarios, we recommend you to implement the Callback function as part of the payment process, especially if you have implemented direct bank payments.
 
 The Callback is an alternative to the pull nature of the Query call to verify the status of the transaction. When using Callback, Netaxept will query the respective payment method service provider for an update of the payment status and based on that send automatically information to the Callback URL set by the merchant when the status of the transaction changes to authorised, captured, credited or annulled. Netaxept queries the new status until the timeout value set by the merchant is reached. In addition, Netaxept will also perform one last try 24 hours after the timeout. If the transaction doesn't change its status within the set time frame, Netaxept will consider the transaction as abandoned or completed and stop looking for updates on the transaction in question.
 
@@ -231,7 +228,7 @@ The payment flow follows the following process:
 
 ## Definition and use cases
 
-Occasionally, the information concerning the success of the payment does not reach all parties or remains otherwise unclear. For example, this may be due to an interruption in data communications during the payment or the customer closing the web browser in the middle of the payment process. The most common scenario is that the customer receives confirmation that the payment is successful, but the same information doesn’t reach the merchant. Due to this, the customer never receives the ordered product although the amount is still captured from the customer's account. In order to avoid these scenarios, we recommend you to implement the Callback function as part of the payment process, especially if you have implemented direct bank payments.
+Occasionally, the information concerning the success of the payment does not reach all parties or remains otherwise unclear. For example, this may be due to an interruption in data communications during the payment or the customer closing the web browser in the middle of the payment process. The most common scenario is that the customer receives confirmation that the payment is successful, but the same information doesnâ€™t reach the merchant. Due to this, the customer never receives the ordered product although the amount is still captured from the customer's account. In order to avoid these scenarios, we recommend you to implement the Callback function as part of the payment process, especially if you have implemented direct bank payments.
 
 The Callback is an alternative to the pull nature of the Query call to verify the status of the transaction. When using Callback, Netaxept will query the respective payment method service provider for an update of the payment status and based on that send automatically information to the Callback URL set by the merchant when the status of the transaction changes to authorised, captured, credited or annulled. Netaxept queries the new status until the timeout value set by the merchant is reached. In addition, Netaxept will also perform one last try 24 hours after the timeout. If the transaction doesn't change its status within the set time frame, Netaxept will consider the transaction as abandoned or completed and stop looking for updates on the transaction in question.
 
