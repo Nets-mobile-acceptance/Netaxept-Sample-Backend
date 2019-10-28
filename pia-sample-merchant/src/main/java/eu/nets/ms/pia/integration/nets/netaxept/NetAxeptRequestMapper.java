@@ -27,6 +27,8 @@ import org.datacontract.schemas._2004._07.bbs_epayment.QueryRequest;
 import org.datacontract.schemas._2004._07.bbs_epayment.Recurring;
 import org.datacontract.schemas._2004._07.bbs_epayment.RegisterRequest;
 import org.datacontract.schemas._2004._07.bbs_epayment.Terminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import epayment.bbs.Process;
 import epayment.bbs.ProcessResponse;
@@ -49,7 +51,7 @@ public class NetAxeptRequestMapper {
 	private static final String DEFAULT_COUNTRY_CODE = "GB";
 	private static final String WS_PLATFORM = "JAX-WS";
 	private static final String ENCODING = "UTF-8";
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(NetAxeptRequestMapper.class);
 	private enum NetaxeptOperation { AUTH, SALE, CAPTURE, CREDIT, ANNUL,VERIFY };
 	
 	public static Register mapRegisterRequest(PaymentRegisterRequest request, Map<String, String> additionalData, NetAxeptConfig cfg){
@@ -241,11 +243,11 @@ public class NetAxeptRequestMapper {
 	}
 	public static PaymentProcessResponse mapPaymentInfoToProcessResponse(PaymentInfo paymentInfo) {
 		String responseCode = "ERROR";
-		String operation = "AUTH";
+		String operation = "SALE";
 		if(paymentInfo.getSummary().isAuthorized()){
 			responseCode = "OK";
-			if(paymentInfo.getSummary().getAmountCaptured() == paymentInfo.getOrderInformation().getAmount()){
-				operation = "SALE";
+			if(paymentInfo.getSummary().getAmountCaptured().equals(paymentInfo.getOrderInformation().getAmount())){
+				operation = "CREDIT";
 			}
 		}
 		 return PaymentProcessResponse.newBuilder()

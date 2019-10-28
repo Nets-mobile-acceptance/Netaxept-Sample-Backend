@@ -1,0 +1,14 @@
+eu.nets.ms.pia
+eu.nets.ms.pia.business.domain
+eu.nets.ms.pia.business.logic
+eu.nets.ms.pia.business.logic.persistence
+eu.nets.ms.pia.business.sync
+eu.nets.ms.pia.config
+eu.nets.ms.pia.exception
+eu.nets.ms.pia.integration
+eu.nets.ms.pia.integration.nets.netaxept
+eu.nets.ms.pia.integration.nets.netaxept.exception
+eu.nets.ms.pia.service.model
+eu.nets.ms.pia.service.model.validation
+eu.nets.ms.pia.service.rest
+eu.nets.ms.pia.utils

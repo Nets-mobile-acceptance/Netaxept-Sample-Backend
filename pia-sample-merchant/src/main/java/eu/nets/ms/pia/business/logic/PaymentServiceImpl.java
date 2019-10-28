@@ -4,6 +4,7 @@ import static eu.nets.ms.pia.service.model.Operation.AUTHORIZE;
 import static eu.nets.ms.pia.service.model.Operation.COMMIT;
 import static eu.nets.ms.pia.service.model.Operation.ROLLBACK;
 import static eu.nets.ms.pia.service.model.Operation.VERIFY;
+import static eu.nets.ms.pia.service.model.Operation.REFUND;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -192,6 +193,7 @@ public class PaymentServiceImpl implements PaymentService {
 		
 		String reference = String.valueOf(order.getOrderId());
 		// Authorize the transaction
+		PaymentProcessResponse authResponse;
 		PaymentProcessRequest authorizationRq = PaymentProcessRequest.newBuilder()
 				.operation(AUTHORIZE)
 				.transactionId(paymentId)
@@ -199,9 +201,14 @@ public class PaymentServiceImpl implements PaymentService {
 				.description("Some description")
 				.transactionReference(reference)
 				.build();
+		
+		if(order != null && order.getMethod() != null && 
+		   order.getMethod().equals(SWISH.getId())) { // bypass the AUTH, as Swish is making SALE operation
+			authorizationRq.setAuthRequired(false);
+		} 
 
-		PaymentProcessResponse authResponse = connector.authorizeTransaction(authorizationRq);
-
+		authResponse = connector.authorizeTransaction(authorizationRq);
+		
 		if (ResponseCode.OK.name().equals(authResponse.getResponseCode())) {
 			// Process the order and if OK capture the previously authorized
 			// amount
@@ -209,6 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
 			//Check if we have card to store
 			storeCardToken(authResponse.getTransactionId(), order.getConsumer(), authorizationRq.getMerchantId());
 			
+			// finalize payment
 			PaymentProcessResponse finalizeResponse;
 
 			if (orderservice.placeOrder(paymentId) == true) {
@@ -229,15 +237,20 @@ public class PaymentServiceImpl implements PaymentService {
 				}else{
 					orderservice.finalizeOrder(paymentId, PaymentState.CANCELLED);
 				}
-				
 			} else {
-				LOGGER.error("Order " + paymentId + " Not placed. Rolling back transaction");
-				finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder().operation(ROLLBACK)
-						.transactionId(authResponse.getTransactionId())
-						.merchantId(merchantId)
-						.transactionReference(reference)
-						.description(authorizationRq.getDescription()).build());
-
+				if (Operation.REFUND.equals(authResponse.getOperation())) { // REFUND if the SALE is PAID
+					finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder().operation(REFUND)
+							.transactionId(authResponse.getTransactionId())
+							.merchantId(merchantId)
+							.transactionReference(reference)
+							.description(authorizationRq.getDescription()).build());	
+				} else { // ANNUL if the SALE is AUTHORIZED
+					finalizeResponse = connector.finalizeTransaction(PaymentProcessRequest.newBuilder().operation(ROLLBACK)
+							.transactionId(authResponse.getTransactionId())
+							.merchantId(merchantId)
+							.transactionReference(reference)
+							.description(authorizationRq.getDescription()).build());					
+				}
 				orderservice.finalizeOrder(paymentId, PaymentState.CANCELLED);
 			}
 			LOGGER.info("<< Process response: {}", finalizeResponse);

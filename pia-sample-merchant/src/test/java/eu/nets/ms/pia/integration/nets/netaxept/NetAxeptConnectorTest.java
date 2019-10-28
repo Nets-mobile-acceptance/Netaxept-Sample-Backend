@@ -90,6 +90,7 @@ public class NetAxeptConnectorTest {
 		System.out.println("Sucessfully invoked web service. response="+response.getTransactionId());
 	}
 	
+	@Ignore
 	@Test
 	public void shouldRetrieveStatusOK() {
 		PaymentRegisterResponse response = connector.registerTransaction(createValidRegisterRequest(),new HashMap<String, String>());

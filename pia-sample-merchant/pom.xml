@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.nets.ms</groupId>
 	<artifactId>pia-merchant-service</artifactId>
-	<version>1.4.0</version>
+	<version>1.5.0</version>
 	<packaging>jar</packaging>
 	<name>pia merchant service</name>
 

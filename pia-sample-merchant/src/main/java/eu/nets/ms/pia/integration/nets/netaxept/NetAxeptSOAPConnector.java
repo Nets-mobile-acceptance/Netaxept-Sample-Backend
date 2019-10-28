@@ -24,6 +24,7 @@ import epayment.bbs.Query;
 import epayment.bbs.Register;
 import epayment.bbs.RegisterResponse;
 import eu.nets.ms.pia.business.domain.PaymentQueryResponse;
+import eu.nets.ms.pia.business.logic.PaymentServiceImpl;
 import eu.nets.ms.pia.business.sync.SyncService;
 import eu.nets.ms.pia.integration.PspConnector;
 import eu.nets.ms.pia.integration.nets.netaxept.exception.NetAxeptProviderException;
@@ -146,7 +147,7 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	
 	/**
 	 * Two scenarios:
-	 * 1) the payment methos used is such that authorization is done inside a Payment wallet.
+	 * 1) the payment method used is such that authorization is done inside a Payment wallet.
 	 *    in these cases we need to wait for the Netaxept callback and query for this result.
 	 *    We do not trigger an authorization from here.
 	 *    
@@ -158,11 +159,14 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	@Override
 	public PaymentProcessResponse authorizeTransaction(PaymentProcessRequest request) {
 		try {
-			if (syncService.lockExists(request.getTransactionId())){
+			if (syncService.lockExists(request.getTransactionId()) && !request.getAuthRequired()){
 				syncService.waitForLockAvailable(request.getTransactionId(), TMO_WAIT_CALLBACK);
 				PaymentInfo paymentInfo = getPaymentInfo(request.getTransactionId(), request.getMerchantId());
 				return NetAxeptRequestMapper.mapPaymentInfoToProcessResponse(paymentInfo);
-			}else{
+			} else if (!syncService.lockExists(request.getTransactionId()) && !request.getAuthRequired()){
+				PaymentInfo paymentInfo = getPaymentInfo(request.getTransactionId(), request.getMerchantId());
+				return NetAxeptRequestMapper.mapPaymentInfoToProcessResponse(paymentInfo);				
+			} else {
 				Process authRequest = NetAxeptRequestMapper.mapAuthorizationRequest(request, config);
 				ProcessResponse processResponse = createEndPoint(request.getMerchantId()).process(authRequest);
 				return NetAxeptRequestMapper.mapAuthorizationResponse(processResponse);

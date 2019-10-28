@@ -21,9 +21,9 @@
 # Installation
 1) Edit credentials to the file etc/secrets/secrets.properties  
    Enter the test credentials as supplied by Netaxept **(Note: There are Unit tests which verifies the connection to Netaxept, thus these tests require correct credentials.)** or add "-DskipTests" to skip running tests  
-   Enter the secret **jwtSecret** for generating the JSON Web Tokens(JWT) via https://jwt.io/  
+   Enter the secret **jwtSecret** for generating the JSON Web Tokens(JWT) via https://jwt.io/ if using Netaxept Callback as the alternative to the pull nature of the Query call
    Configure the Callback URL in Netaxept admin portal  
-   REST Callback API:  
+   REST Callback API:
    ```
    Path: /2.0/status/{YOUR_JSON_WEB_TOKEN}  Method: POST
    ```

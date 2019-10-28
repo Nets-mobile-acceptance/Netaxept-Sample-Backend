@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import eu.nets.ms.pia.service.model.PaymentRegisterRequest.Builder;
 import eu.nets.ms.pia.utils.JsonUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,7 +26,7 @@ import io.swagger.annotations.ApiModelProperty;
 @JsonDeserialize(builder = PaymentProcessRequest.Builder.class)
 public class PaymentProcessRequest {
 
-	@NotNull(message ="Payment operation bust be specified")
+	@NotNull(message ="Payment operation must be specified")
 	@JsonIgnore
 	private final Operation operation;
 	
@@ -54,6 +55,10 @@ public class PaymentProcessRequest {
 	@Size(min=1, max=32, message = "Reference can be max 32 bytes")
 	private final String transactionReference;
 	
+	@JsonIgnore
+	private boolean authRequired;
+
+
 	
 	private PaymentProcessRequest(Builder builder) {
 		this.transactionReference = builder.transactionReference;
@@ -61,6 +66,7 @@ public class PaymentProcessRequest {
 		this.transactionId = builder.transactionId;
 		this.description = builder.description;
 		this.merchantId = Optional.ofNullable(builder.merchantId);
+		this.authRequired = builder.authRequired;
 	}
 	
 	
@@ -87,6 +93,13 @@ public class PaymentProcessRequest {
 		return operation;
 	}
 
+	public boolean getAuthRequired() {
+		return authRequired;
+	}
+
+	public void setAuthRequired(boolean authRequired) {
+		this.authRequired = authRequired;
+	}
 
 	@Override
 	public String toString() {
@@ -105,6 +118,7 @@ public class PaymentProcessRequest {
 		private String description;
 		private String transactionReference;
 		private String merchantId;
+		private boolean authRequired = true;
 		
 		public Builder operation(Operation operation){
 			this.operation = operation;
@@ -130,6 +144,11 @@ public class PaymentProcessRequest {
 			return this;
 		}
 		
+		public Builder authRequired(boolean authRequired){
+			this.authRequired = authRequired;
+			return this;
+		}
+
 		public PaymentProcessRequest build() {
 			PaymentProcessRequest dto = new PaymentProcessRequest(this);
             Set<ConstraintViolation<PaymentProcessRequest>> violations = validator.validate(dto);
