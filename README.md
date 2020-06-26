@@ -122,7 +122,7 @@ If you have any question or feedback, please contact us via email: [mobile-accep
 
 MIT License
 
-Copyright (c) 2019 Nets Denmark A/S
+Copyright (c) 2020 Nets Denmark A/S
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rightsto use, copy, modify, merge, publish, distribute, sublicense, and/or sellcopies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in allcopies or substantial portions of the Software.

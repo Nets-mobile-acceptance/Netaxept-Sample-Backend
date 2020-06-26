@@ -51,7 +51,28 @@ public class PaymentRegisterRequest {
 	
 	@ApiModelProperty(value = "Phone number to be used for alternative payment wallets", required = false)
 	private final Optional<String> phoneNumber;
+
+	@ApiModelProperty(value = "Customer email to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerEmail;
 	
+	@ApiModelProperty(value = "Customer FirstName to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerFirstName;
+
+	@ApiModelProperty(value = "Customer LastName to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerLastName;
+
+	@ApiModelProperty(value = "Customer Address1 to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerAddress1;
+
+	@ApiModelProperty(value = "Customer PostCode to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerPostCode;
+
+	@ApiModelProperty(value = "Customer town to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerTown;
+
+	@ApiModelProperty(value = "Customer Country to be used for paytrail bank payment", required = false)
+	private final Optional<String> customerCountry;
+
 	@ApiModelProperty(value = "Client defined redirectUrl. Used for wallet payments", required = false)
 	private final Optional<String> redirectUrl;
 	
@@ -81,6 +102,13 @@ public class PaymentRegisterRequest {
 		this.paymentData = Optional.ofNullable(builder.paymentData);
 		this.merchantId = Optional.ofNullable(builder.merchantId);
 		this.phoneNumber = Optional.ofNullable(builder.phoneNumber);
+		this.customerEmail = Optional.ofNullable(builder.customerEmail);
+		this.customerFirstName = Optional.ofNullable(builder.customerFirstName);
+		this.customerLastName = Optional.ofNullable(builder.customerLastName);
+		this.customerAddress1 = Optional.ofNullable(builder.customerAddress1);
+		this.customerPostCode = Optional.ofNullable(builder.customerPostCode);
+		this.customerTown = Optional.ofNullable(builder.customerTown);
+		this.customerCountry = Optional.ofNullable(builder.customerCountry);
 		this.redirectUrl = Optional.ofNullable(builder.redirectUrl);
 		if (builder.items != null) {
 			this.items = Optional.of(Collections.unmodifiableList(builder.items));
@@ -104,7 +132,34 @@ public class PaymentRegisterRequest {
 		return phoneNumber;
 	}
 
+	public Optional<String> getCustomerEmail() {
+		return customerEmail;
+	}
 
+	public Optional<String> getCustomerFirstNamer() {
+		return customerFirstName;
+	}
+
+	public Optional<String> getCustomerLastName() {
+		return customerLastName;
+	}
+
+	public Optional<String> getCustomerAddress1() {
+		return customerAddress1;
+	}
+
+	public Optional<String> getCustomerPostCode() {
+		return customerPostCode;
+	}
+
+	public Optional<String> getCustomerTown() {
+		return customerTown;
+	}
+
+	public Optional<String> getCustomerCountry() {
+		return customerCountry;
+	}
+	
 	public Optional<String> getRedirectUrl() {
 		return redirectUrl;
 	}
@@ -163,6 +218,13 @@ public class PaymentRegisterRequest {
 		private String customerId;
 		private String redirectUrl;
 		private String phoneNumber;
+		private String customerEmail;
+		private String customerFirstName;
+		private String customerLastName;
+		private String customerAddress1;
+		private String customerPostCode;
+		private String customerTown;
+		private String customerCountry;
 		private String merchantId;
 		private String cardId;
 		private boolean storeCard = false;
@@ -178,6 +240,34 @@ public class PaymentRegisterRequest {
 		}
 		public Builder phoneNumber(String phoneNumber){
 			this.phoneNumber = phoneNumber;
+			return this;
+		}
+		public Builder customerEmail(String customerEmail){
+			this.customerEmail = customerEmail;
+			return this;
+		}
+		public Builder customerFirstName(String customerFirstName){
+			this.customerFirstName = customerFirstName;
+			return this;
+		}
+		public Builder customerLastName(String customerLastName){
+			this.customerLastName = customerLastName;
+			return this;
+		}
+		public Builder customerAddress1(String customerAddress1){
+			this.customerAddress1 = customerAddress1;
+			return this;
+		}
+		public Builder customerPostCode(String customerPostCode){
+			this.customerPostCode = customerPostCode;
+			return this;
+		}
+		public Builder customerTown(String customerTown){
+			this.customerTown = customerTown;
+			return this;
+		}
+		public Builder customerCountry(String customerCountry){
+			this.customerCountry = customerCountry;
 			return this;
 		}
 		public Builder redirectUrl(String redirectUrl){

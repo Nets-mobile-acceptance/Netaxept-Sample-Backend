@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="AuthenticatedWith" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="AuthenticatedStatus" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ECI" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="ECIDowngraded" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "AuthenticationInformation", propOrder = {
     "authenticatedWith",
     "authenticatedStatus",
-    "eci"
+    "eci",
+    "eciDowngraded"
 })
 public class AuthenticationInformation {
 
@@ -42,6 +44,8 @@ public class AuthenticationInformation {
     protected String authenticatedStatus;
     @XmlElement(name = "ECI", nillable = true)
     protected String eci;
+    @XmlElement(name = "ECIDowngraded", nillable = true)
+    protected String eciDowngraded;
 
     /**
      * Gets the value of the authenticatedWith property.
@@ -113,6 +117,30 @@ public class AuthenticationInformation {
      */
     public void setECI(String value) {
         this.eci = value;
+    }
+
+    /**
+     * Gets the value of the eciDowngraded property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getECIDowngraded() {
+        return eciDowngraded;
+    }
+
+    /**
+     * Sets the value of the eciDowngraded property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setECIDowngraded(String value) {
+        this.eciDowngraded = value;
     }
 
 }

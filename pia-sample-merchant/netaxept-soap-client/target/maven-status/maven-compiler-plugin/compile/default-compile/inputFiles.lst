@@ -7,8 +7,8 @@
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/WalletInformation.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptRegisterValidationExceptionFaultFaultMessage.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/package-info.java
-/tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptProcessValidationExceptionFaultFaultMessage.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptBatchGenericErrorFaultFaultMessage.java
+/tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptProcessValidationExceptionFaultFaultMessage.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/CardInfo.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/AvtaleGiro.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptReconSecurityExceptionFaultFaultMessage.java
@@ -32,8 +32,8 @@
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/QueryResponse.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/ArrayOfItem.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/FraudAnalysis.java
-/tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptRegisterBBSExceptionFaultFaultMessage.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/RegisterResponse.java
+/tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/INetaxeptRegisterBBSExceptionFaultFaultMessage.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/Result.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/epayment/bbs/BatchResponse.java
 /tmp/workspace/-service-multibranch_master-VS2EA4TDVD5EWVSQ4WUTOCCIQMVUUS2Z3VZRPJ7FNBYDOADCWMFA/netaxept-soap-client/target/generated/cxf/org/datacontract/schemas/_2004/_07/bbs_epayment/FinancialSummary.java

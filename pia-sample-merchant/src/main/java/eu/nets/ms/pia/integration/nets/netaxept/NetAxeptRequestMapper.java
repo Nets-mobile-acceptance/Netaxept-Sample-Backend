@@ -5,6 +5,7 @@ import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.EASY_PAY;
 import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.PAY_PAL;
 import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.SWISH;
 import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.VIPPS;
+import static eu.nets.ms.pia.business.logic.PaymentServiceImpl.MOBILE_PAY;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -51,6 +52,7 @@ public class NetAxeptRequestMapper {
 	private static final String DEFAULT_COUNTRY_CODE = "GB";
 	private static final String WS_PLATFORM = "JAX-WS";
 	private static final String ENCODING = "UTF-8";
+	private static final String PAYTRAIL = "Paytrail";
 	private static final Logger LOGGER = LoggerFactory.getLogger(NetAxeptRequestMapper.class);
 	private enum NetaxeptOperation { AUTH, SALE, CAPTURE, CREDIT, ANNUL,VERIFY };
 	
@@ -96,7 +98,10 @@ public class NetAxeptRequestMapper {
 			}else {//CVC/CVV is required for Subsequent transactions 
 				registerRequest.setRecurring(new Recurring());
 				registerRequest.getRecurring().setType("S");
-			}	
+			}
+			// Added this new parameter RecurringTransactionType due to EU regulatory framework PSD2 requested by Netaxept
+			// for recurring or Easy payment transactions only
+			registerRequest.getRecurring().setRecurringTransactionType(null);
 		}
 		
 		//Stage transaction using stored card
@@ -113,6 +118,9 @@ public class NetAxeptRequestMapper {
 			}
 			registerRequest.getRecurring().setPanHash(additionalData.get(AdditionalData.CARD_TOKEN_VALUE));
 			registerRequest.getRecurring().setUse3DS(Boolean.toString(cfg.isSubsequent3Dsecure()));
+			// Added this new parameter RecurringTransactionType due to EU regulatory framework PSD2 requested by Netaxept
+			// for recurring or Easy payment transactions only
+			registerRequest.getRecurring().setRecurringTransactionType(null);
 		}
 		//Stage transaction using ApplePay
 		else if(request.getMethod().isPresent() && request.getMethod().get().equals(APPLE_PAY)){
@@ -134,7 +142,7 @@ public class NetAxeptRequestMapper {
 			//Setup Customer (optional)
 			registerRequest.setCustomer(new Customer());
 			registerRequest.getCustomer().setCountry(DEFAULT_COUNTRY_CODE);
-			// For in-app payments set service type to 'M' except Paypal
+			// For in-app payments set service type to 'M' except Paypal and paytrail bank payment
 			registerRequest.setServiceType("B");
 		}
 		//Stage transaction using Swish / Vipps
@@ -150,6 +158,42 @@ public class NetAxeptRequestMapper {
 				cfg.setRedirectUrl(request.getRedirectUrl().get());
 			}
 			registerRequest.setCustomer(customer);
+		}
+		//Stage transaction using MobilePay
+		else if(request.getMethod().isPresent() && (request.getMethod().get().equals(MOBILE_PAY))){
+			ArrayOfPaymentMethodAction actionList = new ArrayOfPaymentMethodAction();
+			PaymentMethodAction action = new PaymentMethodAction();
+			action.setPaymentMethod(request.getMethod().get().getId());
+			actionList.getPaymentMethodAction().add(action);
+			registerRequest.getTerminal().setPaymentMethodActionList(actionList);
+			if(request.getRedirectUrl().isPresent()) {
+				cfg.setRedirectUrl(request.getRedirectUrl().get());
+			}
+		}
+		//Stage transaction using Paytrail bank payment
+		else if(request.getMethod().isPresent() && (request.getMethod().get().getId() !=null && request.getMethod().get().getId().contains(PAYTRAIL))){
+			ArrayOfPaymentMethodAction actionList = new ArrayOfPaymentMethodAction();
+			PaymentMethodAction action = new PaymentMethodAction();
+			action.setPaymentMethod(request.getMethod().get().getId());
+			actionList.getPaymentMethodAction().add(action);
+			registerRequest.getTerminal().setPaymentMethodActionList(actionList);
+
+			//Setup Customer (mandatory)
+			Customer customer = new Customer();
+			customer.setEmail(request.getCustomerEmail().orElse(null));
+			customer.setFirstName(request.getCustomerFirstNamer().orElse(null));
+			customer.setLastName(request.getCustomerLastName().orElse(null));
+			customer.setAddress1(request.getCustomerAddress1().orElse(null));
+			customer.setPostcode(request.getCustomerPostCode().orElse(null));
+			customer.setTown(request.getCustomerTown().orElse(null));
+			customer.setCountry(request.getCustomerCountry().orElse(null));
+			registerRequest.setCustomer(customer);
+
+			// 3D Secure is not needed for bank payment
+			registerRequest.getOrder().setForce3DSecure(Boolean.toString(false));
+
+			// For in-app payments set service type to 'M' except Paypal and Paytrail bank payment
+			registerRequest.setServiceType("B");
 		}
 		//Setup Env
 		registerRequest.getEnvironment().setWebServicePlatform(WS_PLATFORM);

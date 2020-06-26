@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="Mobile" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}MobileInformation" minOccurs="0"/&gt;
  *         &lt;element name="PaymentFacilitator" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}PaymentFacilitatorInformation" minOccurs="0"/&gt;
  *         &lt;element name="Wallet" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}WalletInformation" minOccurs="0"/&gt;
+ *         &lt;element name="LoyaltyInformation" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}LoyaltyInformation" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/extension&gt;
  *   &lt;/complexContent&gt;
@@ -62,7 +63,8 @@ import javax.xml.bind.annotation.XmlType;
     "fraudAnalysis",
     "mobile",
     "paymentFacilitator",
-    "wallet"
+    "wallet",
+    "loyaltyInformation"
 })
 public class PaymentInfo
     extends QueryResponse
@@ -104,6 +106,8 @@ public class PaymentInfo
     protected PaymentFacilitatorInformation paymentFacilitator;
     @XmlElement(name = "Wallet", nillable = true)
     protected WalletInformation wallet;
+    @XmlElement(name = "LoyaltyInformation", nillable = true)
+    protected LoyaltyInformation loyaltyInformation;
 
     /**
      * Gets the value of the authenticationInformation property.
@@ -535,6 +539,30 @@ public class PaymentInfo
      */
     public void setWallet(WalletInformation value) {
         this.wallet = value;
+    }
+
+    /**
+     * Gets the value of the loyaltyInformation property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link LoyaltyInformation }
+     *     
+     */
+    public LoyaltyInformation getLoyaltyInformation() {
+        return loyaltyInformation;
+    }
+
+    /**
+     * Sets the value of the loyaltyInformation property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link LoyaltyInformation }
+     *     
+     */
+    public void setLoyaltyInformation(LoyaltyInformation value) {
+        this.loyaltyInformation = value;
     }
 
 }

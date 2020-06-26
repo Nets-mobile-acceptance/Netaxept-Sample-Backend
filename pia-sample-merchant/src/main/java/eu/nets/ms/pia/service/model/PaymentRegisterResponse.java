@@ -39,7 +39,6 @@ public class PaymentRegisterResponse {
 		this.redirectOK = builder.redirectOK;
 		this.walletUrl = builder.walletUrl;
 		this.redirectCancel = builder.redirectCancel;
-		
 	}
 	
 	

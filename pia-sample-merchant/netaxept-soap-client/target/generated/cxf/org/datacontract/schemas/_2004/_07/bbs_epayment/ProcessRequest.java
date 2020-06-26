@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
+ *         &lt;element name="AdjustmentType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="CustomerLoyaltyId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="Description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="Goods" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}ArrayOfItem" minOccurs="0"/&gt;
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessRequest", propOrder = {
+    "adjustmentType",
     "customerLoyaltyId",
     "description",
     "goods",
@@ -50,6 +52,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ProcessRequest {
 
+    @XmlElement(name = "AdjustmentType", nillable = true)
+    protected String adjustmentType;
     @XmlElement(name = "CustomerLoyaltyId", nillable = true)
     protected String customerLoyaltyId;
     @XmlElement(name = "Description", nillable = true)
@@ -70,6 +74,30 @@ public class ProcessRequest {
     protected String transactionId;
     @XmlElement(name = "TransactionReconRef", nillable = true)
     protected String transactionReconRef;
+
+    /**
+     * Gets the value of the adjustmentType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAdjustmentType() {
+        return adjustmentType;
+    }
+
+    /**
+     * Sets the value of the adjustmentType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAdjustmentType(String value) {
+        this.adjustmentType = value;
+    }
 
     /**
      * Gets the value of the customerLoyaltyId property.

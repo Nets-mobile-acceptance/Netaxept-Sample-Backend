@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="PanHash" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="PanHashSecret" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="PanhashType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="RecurringTransactionType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="Type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="Use3DS" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
     "panHash",
     "panHashSecret",
     "panhashType",
+    "recurringTransactionType",
     "type",
     "use3DS"
 })
@@ -54,6 +56,8 @@ public class Recurring {
     protected String panHashSecret;
     @XmlElement(name = "PanhashType", nillable = true)
     protected String panhashType;
+    @XmlElement(name = "RecurringTransactionType", nillable = true)
+    protected String recurringTransactionType;
     @XmlElement(name = "Type", nillable = true)
     protected String type;
     @XmlElement(name = "Use3DS", nillable = true)
@@ -177,6 +181,30 @@ public class Recurring {
      */
     public void setPanhashType(String value) {
         this.panhashType = value;
+    }
+
+    /**
+     * Gets the value of the recurringTransactionType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRecurringTransactionType() {
+        return recurringTransactionType;
+    }
+
+    /**
+     * Sets the value of the recurringTransactionType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRecurringTransactionType(String value) {
+        this.recurringTransactionType = value;
     }
 
     /**

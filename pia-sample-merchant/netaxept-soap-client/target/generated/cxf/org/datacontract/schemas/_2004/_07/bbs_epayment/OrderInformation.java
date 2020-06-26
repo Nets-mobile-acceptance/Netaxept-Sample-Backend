@@ -29,6 +29,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="Timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
  *         &lt;element name="Total" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="RoundingAmount" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="SCAExemption" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -48,7 +49,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "orderNumber",
     "timestamp",
     "total",
-    "roundingAmount"
+    "roundingAmount",
+    "scaExemption"
 })
 public class OrderInformation {
 
@@ -73,6 +75,8 @@ public class OrderInformation {
     protected String total;
     @XmlElement(name = "RoundingAmount", nillable = true)
     protected String roundingAmount;
+    @XmlElement(name = "SCAExemption", nillable = true)
+    protected String scaExemption;
 
     /**
      * Gets the value of the acquirerInfo property.
@@ -312,6 +316,30 @@ public class OrderInformation {
      */
     public void setRoundingAmount(String value) {
         this.roundingAmount = value;
+    }
+
+    /**
+     * Gets the value of the scaExemption property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSCAExemption() {
+        return scaExemption;
+    }
+
+    /**
+     * Sets the value of the scaExemption property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSCAExemption(String value) {
+        this.scaExemption = value;
     }
 
 }

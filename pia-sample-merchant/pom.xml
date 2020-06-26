@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.nets.ms</groupId>
 	<artifactId>pia-merchant-service</artifactId>
-	<version>1.5.0</version>
+	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>pia merchant service</name>
 
@@ -22,7 +22,7 @@
 		<swagger.version>1.5.12</swagger.version>
 		<version.logstash.logback>4.11</version.logstash.logback>
 		<version.commons.io>2.5</version.commons.io>
-		<version.netaxept-cli>2.2.14</version.netaxept-cli>
+		<version.netaxept-cli>4.2.8</version.netaxept-cli>
 		<version.junit>4.12</version.junit>
 		<version.jjwt>0.9.1</version.jjwt>
 		<version.mockito>1.10.19</version.mockito>
@@ -306,7 +306,7 @@
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
 					<artifactId>sonar-maven-plugin</artifactId>
-					<version>3.2</version>
+					<version>3.3.0.603</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -444,12 +444,12 @@
 				<artifactId>gitflow-helper-maven-plugin</artifactId>
 				<version>${gitflow.helper.plugin.version}</version>
 				<configuration>
-					<releaseDeploymentRepository>
-						dgw_releases::default::https://nexus.bbsas.no:9006/repository/dgw_releases::false
-					</releaseDeploymentRepository>
 					<stageDeploymentRepository>
 						dgw_stage::default::https://nexus.bbsas.no:9006/repository/dgw_stage::false
 					</stageDeploymentRepository>
+					<releaseDeploymentRepository>
+						dgw_releases::default::https://nexus.bbsas.no:9006/repository/dgw_releases::false
+					</releaseDeploymentRepository>
 					<snapshotDeploymentRepository>
 						dgw_snapshots::default::https://nexus.bbsas.no:9006/repository/dgw_snapshots::true
 					</snapshotDeploymentRepository>

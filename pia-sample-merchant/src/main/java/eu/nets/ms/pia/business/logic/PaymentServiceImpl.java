@@ -79,11 +79,13 @@ import eu.nets.ms.pia.service.model.ResponseCode;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentServiceImpl.class);
+	private static final String PAYTRAIL = "Paytrail";
 	public static final Method EASY_PAY = new Method(MethodEnum.EASY_PAY);
 	public static final Method APPLE_PAY = new Method(MethodEnum.APPLE_PAY);
 	public static final Method PAY_PAL = new Method(MethodEnum.PAY_PAL);
 	public static final Method VIPPS = new Method(MethodEnum.VIPPS);
 	public static final Method SWISH = new Method(MethodEnum.SWISH);
+	public static final Method MOBILE_PAY = new Method(MethodEnum.MOBILE_PAY);
 	
 	@Inject
 	@Qualifier("NetaxeptSOAP")
@@ -203,7 +205,7 @@ public class PaymentServiceImpl implements PaymentService {
 				.build();
 		
 		if(order != null && order.getMethod() != null && 
-		   order.getMethod().equals(SWISH.getId())) { // bypass the AUTH, as Swish is making SALE operation
+				(order.getMethod().equals(SWISH.getId()) || order.getMethod().contains(PAYTRAIL))) { // bypass the AUTH, as Swish and Paytrail bank payment is making auto SALE operation
 			authorizationRq.setAuthRequired(false);
 		} 
 

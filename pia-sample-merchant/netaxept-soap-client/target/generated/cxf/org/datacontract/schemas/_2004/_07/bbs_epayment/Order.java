@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="Force3DSecure" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="Goods" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}ArrayOfItem" minOccurs="0"/&gt;
  *         &lt;element name="OrderNumber" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="SCAExemption" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="UpdateStoredPaymentInfo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="ValidateCustomer" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
     "force3DSecure",
     "goods",
     "orderNumber",
+    "scaExemption",
     "updateStoredPaymentInfo",
     "validateCustomer"
 })
@@ -58,6 +60,8 @@ public class Order {
     protected ArrayOfItem goods;
     @XmlElement(name = "OrderNumber", nillable = true)
     protected String orderNumber;
+    @XmlElement(name = "SCAExemption", nillable = true)
+    protected String scaExemption;
     @XmlElement(name = "UpdateStoredPaymentInfo", nillable = true)
     protected String updateStoredPaymentInfo;
     @XmlElement(name = "ValidateCustomer")
@@ -205,6 +209,30 @@ public class Order {
      */
     public void setOrderNumber(String value) {
         this.orderNumber = value;
+    }
+
+    /**
+     * Gets the value of the scaExemption property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSCAExemption() {
+        return scaExemption;
+    }
+
+    /**
+     * Sets the value of the scaExemption property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSCAExemption(String value) {
+        this.scaExemption = value;
     }
 
     /**

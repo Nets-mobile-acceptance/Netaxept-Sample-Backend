@@ -40,6 +40,7 @@ import eu.nets.ms.pia.service.model.PaymentRegisterResponse;
 @Component(value = "NetaxeptSOAP")
 public class NetAxeptSOAPConnector implements PspConnector {
 	private static final String ERROR_COMMUNICATING_WITH_NETAXEPT = "Error communicating with Netaxept";
+	private static final String PAYTRAIL = "Paytrail";
 	private static final Logger LOGGER = LoggerFactory.getLogger(NetAxeptSOAPConnector.class);
 	private static final String SERVICE_NAME = "NETAXEPT";
 	private static final String SERVICE_PATH = "Netaxept.svc";
@@ -139,7 +140,10 @@ public class NetAxeptSOAPConnector implements PspConnector {
 		Method method = request.getMethod().orElse(null);
 		if(method != null){
 			MethodEnum methodEnum = MethodEnum.create(method.getId());
-			if(MethodEnum.SWISH.equals(methodEnum) || MethodEnum.VIPPS.equals(methodEnum)){
+			if(MethodEnum.SWISH.equals(methodEnum) || 
+			   MethodEnum.VIPPS.equals(methodEnum) || 
+			   methodEnum.getId().contains(PAYTRAIL) ||
+			   MethodEnum.MOBILE_PAY.equals(methodEnum)){
 				syncService.createLock(response.getRegisterResult().getTransactionId());
 			}
 		}
@@ -147,7 +151,7 @@ public class NetAxeptSOAPConnector implements PspConnector {
 	
 	/**
 	 * Two scenarios:
-	 * 1) the payment method used is such that authorization is done inside a Payment wallet.
+	 * 1) the payment method used is such that authorization is done inside a Payment wallet or bank payment.
 	 *    in these cases we need to wait for the Netaxept callback and query for this result.
 	 *    We do not trigger an authorization from here.
 	 *    

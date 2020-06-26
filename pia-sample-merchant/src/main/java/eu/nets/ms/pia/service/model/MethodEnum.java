@@ -12,7 +12,18 @@ public enum MethodEnum {
 	JCB("JCB", "JCB", 0L),
 	SWISH("SwishM", "Swish", 0L),
 	VIPPS("Vipps", "Vipps", 0L),
-	MAESTRO ("Maestro", "Maestro", 0L);
+	MOBILE_PAY("MobilePay", "MobilePay", 0L),
+	MAESTRO ("Maestro", "Maestro", 0L),
+	PAYTRAIL_AKTIA("PaytrailAktia" , "PaytrailAktia", 0L),
+	PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbanken" , "PaytrailAlandsbanken", 0L),
+	PAYTRAIL_DANSKEBANK("PaytrailDanskeBank" , "PaytrailDanskeBank", 0L),
+	PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbanken" , "PaytrailHandelsbanken", 0L),
+	PAYTRAIL_NORDEA("PaytrailNordea" , "PaytrailNordea", 0L),
+	PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankki" , "PaytrailOmaSaastopankki", 0L),
+	PAYTRAIL_OP("PaytrailOP" , "PaytrailOP", 0L),
+	PAYTRAIL_POP("PaytrailPOP" , "PaytrailPOP", 0L),
+	PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankki" , "PaytrailSaastopankki", 0L),
+	PAYTRAIL_SPANKKI("PaytrailSPankki" , "PaytrailSPankki", 0L);
 	
 	private String id;
 	private String displayName;
@@ -47,8 +58,28 @@ public enum MethodEnum {
 			return MethodEnum.SWISH;
 		case "Vipps":
 			return MethodEnum.VIPPS;
-		case "Maestro":
-			return MethodEnum.MAESTRO;
+		case "MobilePay":
+			return MethodEnum.MOBILE_PAY;
+		case "PaytrailAktia":
+			return MethodEnum.PAYTRAIL_AKTIA;
+		case "PaytrailAlandsbanken":
+			return MethodEnum.PAYTRAIL_ALANDSBANKEN;			
+		case "PaytrailDanskeBank":
+			return MethodEnum.PAYTRAIL_DANSKEBANK;
+		case "PaytrailHandelsbanken":
+			return MethodEnum.PAYTRAIL_HANDELSBANKEN;
+		case "PaytrailNordea":
+			return MethodEnum.PAYTRAIL_NORDEA;
+		case "PaytrailOmaSaastopankki":
+			return MethodEnum.PAYTRAIL_OMASAASTOPANKKI;
+		case "PaytrailOP":
+			return MethodEnum.PAYTRAIL_OP;
+		case "PaytrailPOP":
+			return MethodEnum.PAYTRAIL_POP;
+		case "PaytrailSaastopankki":
+			return MethodEnum.PAYTRAIL_SAASTOPANKKI;
+		case "PaytrailSPankki":
+			return MethodEnum.PAYTRAIL_SPANKKI;
 		default:
 			return null;
 		}

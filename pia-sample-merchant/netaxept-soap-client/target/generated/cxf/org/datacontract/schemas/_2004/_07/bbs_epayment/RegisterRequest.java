@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="DnBNorDirectPayment" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}DnBNorDirectPayment" minOccurs="0"/&gt;
  *         &lt;element name="Environment" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}Environment" minOccurs="0"/&gt;
  *         &lt;element name="Fraud" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}Fraud" minOccurs="0"/&gt;
+ *         &lt;element name="IsApp" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
  *         &lt;element name="LoyaltyInformation" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}LoyaltyInformation" minOccurs="0"/&gt;
  *         &lt;element name="MicroPayment" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}MicroPayment" minOccurs="0"/&gt;
  *         &lt;element name="Order" type="{http://schemas.datacontract.org/2004/07/BBS.EPayment.ServiceLibrary}Order" minOccurs="0"/&gt;
@@ -53,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "dnBNorDirectPayment",
     "environment",
     "fraud",
+    "isApp",
     "loyaltyInformation",
     "microPayment",
     "order",
@@ -82,6 +84,8 @@ public class RegisterRequest {
     protected Environment environment;
     @XmlElement(name = "Fraud", nillable = true)
     protected Fraud fraud;
+    @XmlElement(name = "IsApp")
+    protected Boolean isApp;
     @XmlElement(name = "LoyaltyInformation", nillable = true)
     protected LoyaltyInformation loyaltyInformation;
     @XmlElement(name = "MicroPayment", nillable = true)
@@ -293,6 +297,30 @@ public class RegisterRequest {
      */
     public void setFraud(Fraud value) {
         this.fraud = value;
+    }
+
+    /**
+     * Gets the value of the isApp property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isIsApp() {
+        return isApp;
+    }
+
+    /**
+     * Sets the value of the isApp property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setIsApp(Boolean value) {
+        this.isApp = value;
     }
 
     /**

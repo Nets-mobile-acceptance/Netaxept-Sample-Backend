@@ -36,7 +36,18 @@ public enum NetAxeptPaymentMethods {
 		SE_DEBIT_MC("SwedishDebitMasterCard"),
 		SE_DEBIT_VISA("SwedishDebitVisa"),
 		LICCARD("LICCard"),
-		ACCEPTCARD("AcceptCard");
+		ACCEPTCARD("AcceptCard"),
+		PAYTRAIL_AKTIA("PaytrailAktia"),
+		PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbanken"),
+		PAYTRAIL_DANSKEBANK("PaytrailDanskeBank"),
+		PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbanken"),
+		PAYTRAIL_NORDEA("PaytrailNordea"),
+		PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankki"),
+		PAYTRAIL_OP("PaytrailOP"),
+		PAYTRAIL_POP("PaytrailPOP"),
+		PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankki"),
+		PAYTRAIL_SPANKKI("PaytrailSPankki");
+	
 	String methodName;
 	NetAxeptPaymentMethods(String methodName){
 		this.methodName = methodName;
