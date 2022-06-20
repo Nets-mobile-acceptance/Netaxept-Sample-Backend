@@ -116,7 +116,7 @@ If you need to open your firewall for the Callback messages from Netaxept, the f
 A reference implementation on how to use the Netaxept callback for a complete E2E transaction is available in this Netaxept sample backend.
 
 # Contact
-If you have any question or feedback, please contact us via email: [mobile-acceptance@nets.eu](mailto:mobile-acceptance@nets.eu)
+If you have any question or feedback, please contact us via email: [in-app-support@nets.eu](mailto:in-app-support@nets.eu)
 
 # License
 
