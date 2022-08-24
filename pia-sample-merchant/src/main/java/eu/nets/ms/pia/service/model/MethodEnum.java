@@ -14,16 +14,16 @@ public enum MethodEnum {
 	VIPPS("Vipps", "Vipps", 0L),
 	MOBILE_PAY("MobilePay", "MobilePay", 0L),
 	MAESTRO ("Maestro", "Maestro", 0L),
-	PAYTRAIL_AKTIA("PaytrailAktia" , "PaytrailAktia", 0L),
-	PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbanken" , "PaytrailAlandsbanken", 0L),
-	PAYTRAIL_DANSKEBANK("PaytrailDanskeBank" , "PaytrailDanskeBank", 0L),
-	PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbanken" , "PaytrailHandelsbanken", 0L),
-	PAYTRAIL_NORDEA("PaytrailNordea" , "PaytrailNordea", 0L),
-	PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankki" , "PaytrailOmaSaastopankki", 0L),
-	PAYTRAIL_OP("PaytrailOP" , "PaytrailOP", 0L),
-	PAYTRAIL_POP("PaytrailPOP" , "PaytrailPOP", 0L),
-	PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankki" , "PaytrailSaastopankki", 0L),
-	PAYTRAIL_SPANKKI("PaytrailSPankki" , "PaytrailSPankki", 0L);
+	PAYTRAIL_AKTIA("PaytrailAktia" , "PaytrailAktiaFinland", 0L),
+	PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbanken" , "PaytrailAlandsbankenFinland", 0L),
+	PAYTRAIL_DANSKEBANK("PaytrailDanskeBank" , "PaytrailDanskeBankFinland", 0L),
+	PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbanken" , "PaytrailHandelsbankenFinland", 0L),
+	PAYTRAIL_NORDEA("PaytrailNordea" , "PaytrailNordeaFinland", 0L),
+	PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankki" , "PaytrailOmaSaastopankkiFinland", 0L),
+	PAYTRAIL_OP("PaytrailOP" , "PaytrailOPBankFinland", 0L),
+	PAYTRAIL_POP("PaytrailPOP" , "PaytrailPOPFinland", 0L),
+	PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankki" , "PaytrailSaastopankkiFinland", 0L),
+	PAYTRAIL_SPANKKI("PaytrailSPankki" , "PaytrailSPankkiFinland", 0L);
 	
 	private String id;
 	private String displayName;
