@@ -37,16 +37,16 @@ public enum NetAxeptPaymentMethods {
 		SE_DEBIT_VISA("SwedishDebitVisa"),
 		LICCARD("LICCard"),
 		ACCEPTCARD("AcceptCard"),
-		PAYTRAIL_AKTIA("PaytrailAktia"),
-		PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbanken"),
-		PAYTRAIL_DANSKEBANK("PaytrailDanskeBank"),
-		PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbanken"),
-		PAYTRAIL_NORDEA("PaytrailNordea"),
-		PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankki"),
-		PAYTRAIL_OP("PaytrailOP"),
-		PAYTRAIL_POP("PaytrailPOP"),
-		PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankki"),
-		PAYTRAIL_SPANKKI("PaytrailSPankki");
+		PAYTRAIL_AKTIA("PaytrailAktiaFinland"),
+		PAYTRAIL_ALANDSBANKEN("PaytrailAlandsbankenFinland"),
+		PAYTRAIL_DANSKEBANK("PaytrailDanskeBankFinland"),
+		PAYTRAIL_HANDELSBANKEN("PaytrailHandelsbankenFinland"),
+		PAYTRAIL_NORDEA("PaytrailNordeaFinland"),
+		PAYTRAIL_OMASAASTOPANKKI("PaytrailOmaSaastopankkiFinland"),
+		PAYTRAIL_OP("PaytrailOPBankFinland"),
+		PAYTRAIL_POP("PaytrailPOPFinland"),
+		PAYTRAIL_SAASTOPANKKI("PaytrailSaastopankkiFinland"),
+		PAYTRAIL_SPANKKI("PaytrailSPankkiFinland");
 	
 	String methodName;
 	NetAxeptPaymentMethods(String methodName){
