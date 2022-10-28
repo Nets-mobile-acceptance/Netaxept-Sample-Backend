@@ -174,7 +174,7 @@ public class NetAxeptRequestMapper {
 		else if(request.getMethod().isPresent() && (request.getMethod().get().getId() !=null && request.getMethod().get().getId().contains(PAYTRAIL))){
 			ArrayOfPaymentMethodAction actionList = new ArrayOfPaymentMethodAction();
 			PaymentMethodAction action = new PaymentMethodAction();
-			action.setPaymentMethod(request.getMethod().get().getId());
+			action.setPaymentMethod(request.getMethod().get().getDisplayName());
 			actionList.getPaymentMethodAction().add(action);
 			registerRequest.getTerminal().setPaymentMethodActionList(actionList);
 
