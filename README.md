@@ -111,15 +111,10 @@ Example of the Callback URL sent by Netaxept: {"TransactionId":"19a2540f-89c9-43
 If you need to open your firewall for the Callback messages from Netaxept, the following are the applicable outgoing IP addresses:
 
 -   Production
-	1. If you have a direct connection to Netaxept you need to stop using this by removing any references to IP: 91.102.25.117 on your servers or 		   hosting environment that is communicating with Netaxept.
-	2. If you are using the Netaxept call-back service and have Netaxept IP: 91.102.25.117 whitelisted on your servers or hosting environment, you 		   need to also whitelist the following Netaxept Azure IPs: 20.73.84.128/28 
-	3. If you whitelisted Netaxept static IPs (185.11.124.27, 192.230.64.27, 192.230.65.27, and 45.60.74.57) on your firewall to connect to Netaxept, 	     then you need to also add this static IP: 137.117.170.23.
-	4. The domains https://epayment.auriganet.eu/ and https://mpi.epayment.nets.eu will be decommissioned. If you are using any of the above domains 	    in the integration, then you need to change it to https://epayment.nets.eu/.
-	5. If you are using IP: 91.102.24.101 to connect to Netaxept endpoint, then you need to stop using direct access to this IP and instead use any of 	      the Netaxept domain URL’s (https://epayment.nets.eu/,  https://epayment.bbs.no/). This IP (91.102.24.101) will not be functioning once Netaxept 		 will be migrated to Azure.
-
+	- If you are using the Netaxept call-back service and have Netaxept IP: 91.102.25.117 whitelisted on your servers or hosting environment, you 		  need to also whitelist the following Netaxept Azure IPs: 20.73.84.128/28 
+	
 -   Test
-	1. If you have direct connection to Netaxept you need to stop using this by removing any references to IP 91.102.24.102 on your servers or hosting 	      environment that are communicating with Netaxept.
-	2. If you are using Netaxept callback service and you will have Netaxept IP 91.102.27.1 whitelisted on your servers or hosting environment. Then 	    you need to whitelist these Netaxept Azure IPs instead – 40.127.108.248, 20.31.42.136, 20.67.83.192/30
+	- If you are using Netaxept callback service and you will have Netaxept IP 91.102.27.1 whitelisted on your servers or hosting environment. Then 	  you need to whitelist these Netaxept Azure IPs instead – 40.127.108.248, 20.31.42.136, 20.67.83.192/30
 
 A reference implementation on how to use the Netaxept callback for a complete E2E transaction is available in this Netaxept sample backend.
 
