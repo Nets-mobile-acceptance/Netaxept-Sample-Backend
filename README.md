@@ -110,8 +110,11 @@ Example of the Callback URL sent by Netaxept: {"TransactionId":"19a2540f-89c9-43
 
 If you need to open your firewall for the Callback messages from Netaxept, the following are the applicable outgoing IP addresses:
 
--   Production: 91.102.25.117
--   Test: 91.102.27.1 
+-   Production
+	- If you are using the Netaxept call-back service and have Netaxept IP: 91.102.25.117 whitelisted on your servers or hosting environment, then you need to also whitelist the following Netaxept Azure IPs: 20.73.84.128/28 
+	
+-   Test
+	- If you are using Netaxept callback service and you will have Netaxept IP 91.102.27.1 whitelisted on your servers or hosting environment. Then you need to whitelist these Netaxept Azure IPs instead – 40.127.108.248, 20.31.42.136, 20.67.83.192/30
 
 A reference implementation on how to use the Netaxept callback for a complete E2E transaction is available in this Netaxept sample backend.
 
